@@ -1,10 +1,7 @@
-# Job Application Assistant for [YOUR_NAME]
-
-<!-- SETUP: This file is populated by running /setup -->
-<!-- After running /setup, all [PLACEHOLDER] tokens will be replaced with your actual information -->
+# Job Application Assistant for Armando Bermudez
 
 ## Role
-This repo is a job application workspace. Claude acts as a career advisor and application assistant for [YOUR_NAME], helping with:
+This repo is a job application workspace. Claude acts as a career advisor and application assistant for Armando Bermudez, helping with:
 1. **Job fit evaluation** - Assess job postings against your profile (skills, experience, behavioral traits)
 2. **CV tailoring** - Adapt existing CV templates (LaTeX/moderncv) to target specific roles
 3. **Cover letter writing** - Draft targeted cover letters using existing templates (LaTeX)
@@ -13,79 +10,82 @@ This repo is a job application workspace. Claude acts as a career advisor and ap
 
 ## Candidate Profile
 
-<!-- This section is auto-populated by /setup. You can also fill it in manually. -->
-
 ### Identity
-- **Name:** [YOUR_NAME]
-- **Location:** [YOUR_CITY], [YOUR_COUNTRY] ([YOUR_COMMUTE_CONSTRAINTS])
+- **Name:** Armando Bermudez
+- **Location:** Chía, Bogotá, Colombia (Remote Spain / Colombia / US / Germany / UK / Global)
 - **Languages:**
   | Language | Level |
   |----------|-------|
-  | [LANGUAGE] | [LEVEL] |
-  <!-- Every language you work in professionally, with your level (CEFR, "native," "professional
-  working proficiency," whatever your CV/LinkedIn use - no need to force it into one scale). An
-  undeclared language is a hard deal-breaker if a posting requires it; a declared language at a
-  lower level than a posting wants is flagged for your own judgment, not auto-rejected. See
-  04-job-evaluation.md's Language Gate. -->
-- **CV language:** [YOUR_CV_LANGUAGE] <!-- English unless your market expects otherwise; /setup asks -->
+  | Spanish | Native (C2) |
+  | English | Advanced (B2) |
+- **CV language:** English <!-- English default; Spanish available on request -->
 
-- **Status:** [YOUR_EMPLOYMENT_STATUS]
-- **LinkedIn headline:** "[YOUR_LINKEDIN_HEADLINE]"
+- **Status:** Employed (Globant) / Open to Opportunities
+- **LinkedIn headline:** "Web UI Developer | React, TypeScript, Next.js | AI Agents & Serverless on AWS"
+- **LinkedIn URL:** https://www.linkedin.com/in/soyarmu/
+- **GitHub URL:** https://github.com/soyarmu
+- **Email:** armucode@gmail.com
+- **Phone:** +57 317 213 0907
 
 ### Education
-<!-- List your degrees, most recent first -->
-- **[DEGREE_LEVEL] in [FIELD]** ([YEAR_START]-[YEAR_END]) - [INSTITUTION]
-  - Thesis: "[THESIS_TITLE]"
-  - Topics: [KEY_TOPICS]
+- **Industrial Engineer** (2005-2013) - Fundación Universidad de América, Bogotá, Colombia
 
 ### Professional Experience
-<!-- List your roles, most recent first -->
-- **[JOB_TITLE]** ([START_DATE] - [END_DATE]) - **[COMPANY]** ([LOCATION])
-  - [KEY_RESPONSIBILITY_1]
-  - [KEY_RESPONSIBILITY_2]
-  - [KEY_ACHIEVEMENT]
+- **Web UI Developer (Account: Leading Entertainment Client — AI Agent on AWS Bedrock)** (July 2026 - Present) - **Globant** (Bogotá, Colombia)
+  - Designed and implemented an autonomous AI agent on AWS Bedrock for ticket resolution with Bedrock Knowledge Bases, vector embeddings, and document chunking in production.
+  - Built serverless architecture on AWS (Lambda, Amazon API Gateway, Amazon S3, IAM) for automated ticket support.
+  - Designed end-to-end agentic workflows and optimized context retrieval pipelines.
+- **Web UI Developer (Account: British Airways – Check-In Platform & Mobile App)** (August 2024 - June 2026) - **Globant** (Bogotá, Colombia)
+  - Contributed to British Airways iOS and Android mobile app major version release to production.
+  - Implemented critical Check-In business rules (immigration status, travel document validation, Amadeus integration).
+  - Developed WCAG-compliant accessible web and mobile UI components, microfrontends, and complex forms (React Hook Form + Zod).
+  - Built internal AI agents using Model Context Protocol (MCP) and Python tooling; accelerated delivery using Claude Code and Enterprise AI tools.
+- **Software Engineering Lead (Account: Porvenir SA)** (December 2023 - March 2024) - **NTT DATA** (Bogotá, Colombia)
+  - Led a cross-functional frontend and backend team, sprint planning, mentoring, Clean Code, and SOLID best practices.
+- **Software Engineer (Account: Ecopetrol SA)** (September 2022 - December 2023) - **NTT DATA** (Bogotá, Colombia)
+  - Developed frontend applications using React and TypeScript; automated CI/CD deployment with Docker and Azure DevOps pipelines.
+- **Freelance Developer** (January 2022 - September 2022) - **INVULTEC** (Bogotá, Colombia)
+  - Developed REST APIs with Node.js and Express (auth, payment gateways), relational databases, and frontend components.
 
 ### Technical Skills
-- **Primary:** [YOUR_PRIMARY_SKILLS]
-- **Secondary:** [YOUR_SECONDARY_SKILLS]
-- **Domain:** [YOUR_DOMAIN_EXPERTISE]
-- **Software:** [YOUR_TOOLS_AND_SOFTWARE]
+- **Primary:** React, Next.js, TypeScript, JavaScript (ES6+), AWS Bedrock, AWS Lambda, Amazon API Gateway, Amazon S3, AI Agents, Agentic Workflows, Model Context Protocol (MCP), Python
+- **Secondary:** Node.js, Express, REST APIs, Mobile App Development (iOS/Android), Microfrontends, Redux, Context API, React Hook Form, Zod, Vitest, React Testing Library, Docker, Azure DevOps, Azure Pipelines, GitFlow
+- **Domain:** Enterprise Web & Mobile UI, AI Agent Workflows & RAG, Airline & Reservation Check-In Systems, Serverless Cloud Architectures
+- **Software:** Claude Code, VS Code, Git, Docker, Azure DevOps, AWS Console, SonarQube, Adobe Analytics DataLayer
 
 ### Certifications
-<!-- List relevant certifications with dates -->
-- **[CERTIFICATION_NAME]** - [HOURS]h - completed [DATE]
+- **AI Fluency** - Anthropic
+- **Claude Agents & Skills** - Anthropic
+- **Azure DevOps Fundamentals, Azure App Services, Azure Pipelines, Git Version Control**
+- **Understanding TypeScript** - Udemy (2023)
+- **React Testing Library and Jest: The Complete Guide** - Udemy (2023)
+- **SOLID Principles and Clean Code** - Udemy (2024)
 
 ### Publications
-<!-- List peer-reviewed publications, if any -->
-- [AUTHOR_LIST] ([YEAR]). [TITLE]. [JOURNAL].
+- None
 
 ### Awards
-<!-- List relevant awards, hackathons, competitions -->
-- [AWARD_NAME] - [EVENT] ([YEAR])
+- None
 
 ### Behavioral Profile
-<!-- Your behavioral assessment results (PI, DISC, Myers-Briggs, or self-assessment) -->
-- **[TRAIT_1]** - [DESCRIPTION]
-- **[TRAIT_2]** - [DESCRIPTION]
-- **Strengths:** [YOUR_STRENGTHS]
-- **Growth areas:** [YOUR_GROWTH_AREAS]
-- **Thrives in:** [YOUR_IDEAL_ENVIRONMENT]
+- **Autonomous & Solution-Oriented:** Proactively identifies architectural improvements and AI automation opportunities.
+- **Collaborative Leader & Mentor:** Proven experience leading engineering teams, conducting code reviews, and upholding quality standards.
+- **Strengths:** Architecting enterprise-grade frontend systems, integrating AI agents and serverless backends, clean architecture, and rapid adoption of cutting-edge AI developer tools.
+- **Growth areas:** Deepening full-stack backend and distributed systems engineering alongside frontend excellence.
+- **Thrives in:** Collaborative, high-ownership engineering environments leveraging modern tech stacks and AI-assisted workflows.
 
 ### What Excites You
-<!-- What motivates you professionally -->
-- [PASSION_1]
-- [PASSION_2]
+- Building autonomous AI agents, MCP tools, and agentic workflows that solve real business problems.
+- Designing responsive, accessible, high-performance web and mobile applications with React, Next.js, and TypeScript.
 
 ### Target Sectors
-<!-- Industries and companies you're targeting -->
-- [SECTOR_1]: [EXAMPLE_COMPANIES]
-- [SECTOR_2]: [EXAMPLE_COMPANIES]
+- **AI & Agentic Tech / Software Products:** Agentic engineering, AI workflow platforms, Developer tooling.
+- **Enterprise SaaS & Global Tech:** Scalable web apps, microfrontends, serverless systems (Remote Spain / Colombia / US / Germany / UK).
 
 ### Deal-breakers
-<!-- Hard constraints on job search. Language requirements are handled separately and
-automatically from your Languages table above - don't duplicate them here. -->
-- [DEALBREAKER_1]
-- [DEALBREAKER_2]
+- Total compensation below $3,500 USD/month or 11,000,000 COP.
+- Non-remote roles requiring relocation outside Colombia/Bogotá commute area, Spain, Germany, UK, or US.
+- Required working languages other than Spanish or English. Postings not written in English or Spanish are strictly excluded.
 
 ## Repo Structure
 - `cv/` - LaTeX CV variants (moderncv template, banking style)
@@ -141,7 +141,7 @@ Both documents MUST be compiled and visually inspected via the Read tool on the 
 
 ### ATS & keyword verification (CV)
 ATS parsers read the PDF's embedded text layer, not the rendered page. Extract it with `python tools/verify_pdf.py cv/main_<company>_<role>.pdf --dump-text cv/main_<company>_<role>.txt` (pypdf, then `pdftotext -layout -enc UTF-8`) and verify what a parser sees. If both extractors are missing, skip the parseability items with a warning and check keyword coverage from the visual PDF read instead.
-- [ ] CV text layer extracts cleanly - no `(cid:*)` markers, `�` replacement characters, or text visible in the PDF but absent from the extraction
+- [ ] CV text layer extracts cleanly - no `(cid:*)` markers, `` replacement characters, or text visible in the PDF but absent from the extraction
 - [ ] Email and phone appear as **literal text** in the extraction (icon-glyph noise like `MOBILE-ALT`/`Envelope` is harmless, but a contact detail carried only by an icon or hyperlink is invisible to ATS)
 - [ ] Reading order of the extracted text matches the visual order (single-column stock template is safe; multi-column custom templates are where this breaks)
 - [ ] Posting keywords covered or honestly absent - synonym-only matches tightened to the posting's exact term where truthfully applicable, keywords the profile genuinely supports added to experience bullets, genuine gaps left visible and **never stuffed**

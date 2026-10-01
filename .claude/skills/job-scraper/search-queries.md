@@ -1,90 +1,121 @@
 # Search Queries for Job Scraper
 
-<!-- SETUP: Customize these queries based on your skills, target roles, and location -->
-
 ## Installed portal CLIs (primary for `/scrape`)
 
-`/scrape` discovers every portal skill under `.agents/skills/*/SKILL.md` and runs its CLI first. Shipped country-agnostic CLIs include `linkedin-search` and `freehire-search`; Danish demos and any skill you add with `/add-portal` are included the same way. You do **not** need a matching `site:` line below for those CLIs to run.
+`/scrape` discovers every portal skill under `.agents/skills/*/SKILL.md` and runs its CLI first. Shipped country-agnostic CLIs include `linkedin-search` and `freehire-search`. You do **not** need a matching `site:` line below for those CLIs to run.
 
 The `site:` query templates in this file are the **WebSearch fallback** — for portals without a CLI, company career pages, or when a CLI fails.
 
-**Language scope:** write every query category in every language listed in your CLAUDE.md Languages table (typically 1-2, sometimes more). A posting requiring a language you have *not* declared, as a job condition, is excluded before scoring; a posting requiring a *higher level* than you declared in a language you *do* work in is flagged for your own judgment, not excluded — see `04-job-evaluation.md`'s Language Gate, the single source of truth for this rule. Translate each category's keywords rather than machine-translating word-for-word (e.g. "Frontend Developer" -> "Desarrollador Frontend", not a literal word-for-word translation) if you work in more than one language.
+**Language scope:** Queries are written in both English and Spanish (candidate works in both).
+
+**Exclusions:** `-BairesDev` and `-Bairesdev` are appended to queries to prevent BairesDev job listings from populating search results.
 
 ## Search Sites
 
-Primary (your market's job boards - scaffold one with `/add-portal`):
-- **[YOUR_JOB_BOARD]** - your market's largest general job board
-- **linkedin.com/jobs** - LinkedIn job listings (filter: [YOUR_COUNTRY] / [YOUR_CITY]); also covered by `linkedin-search` CLI
-- **[YOUR_INDUSTRY_JOB_BOARD]** - a niche/industry board for your field (optional)
-- **[YOUR_ADDITIONAL_JOB_BOARD]** - another major board for your market (optional)
-
-Secondary (company career pages via Google):
-- Direct Google searches with `site:` filters for known target companies
+Primary:
+- **linkedin.com/jobs** - LinkedIn job listings (Global Remote / US Remote / LATAM Remote / Colombia / Spain / Germany / UK)
+- **wellfound.com/jobs** - High-growth startups & AI tech companies (Global / US / Europe)
+- **getonbrd.com** - Leading tech and remote job board across LATAM & worldwide
+- **remoteok.com** - Global remote developer jobs
+- **weworkremotely.com** - Global remote engineering jobs
+- **getmanfred.com** - Manfred (tech job board in Spain)
+- **infojobs.net** - InfoJobs (Spain tech roles)
+- **tecnoempleo.com** - Tecnoempleo (Spain specialized IT board)
+- **dice.com** - Dice (US specialized tech board)
 
 ## Query Categories
 
-Queries are grouped by priority. Write **each category in every language from your Languages table** (see Language scope above). Combine each query with your location terms (e.g. your city, region, or metro area) where the site supports it.
+### Priority 1: Senior Frontend Developer / Web UI Developer (React & TypeScript)
 
-**Organize by function, not job title.** The same underlying work carries different titles across companies and markets (a "Data Scientist" role at one employer may be posted as "Insights Analyst" or "Data Consultant" at another). Name each priority category after the function it covers, and list several plausible job titles as query variants within that category rather than betting an entire priority tier on one exact title string.
+Core focus matching 5+ years of enterprise experience.
 
-### Priority 1: [YOUR_PRIMARY_ROLE_TYPE]
-
-These match your strongest and most desired career direction.
-
+**English queries:**
 ```
-site:[YOUR_JOB_BOARD] "[YOUR_PRIMARY_JOB_TITLE_1]" [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "[YOUR_PRIMARY_JOB_TITLE_2]" [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "[YOUR_KEY_SKILL]" [YOUR_CITY]
-site:linkedin.com/jobs "[YOUR_PRIMARY_JOB_TITLE_1]" [YOUR_COUNTRY]
-```
-
-### Priority 2: [YOUR_DOMAIN_EXPERTISE]
-
-These match your domain expertise.
-
-```
-site:[YOUR_JOB_BOARD] [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] OR [YOUR_REGION]
-site:[YOUR_JOB_BOARD] [YOUR_DOMAIN_KEYWORD_2] [YOUR_COUNTRY]
-site:linkedin.com/jobs [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] [YOUR_COUNTRY]
+site:linkedin.com/jobs "Senior Frontend Developer" React TypeScript Remote -BairesDev -Bairesdev
+site:linkedin.com/jobs "Senior Web UI Developer" React TypeScript -BairesDev -Bairesdev
+site:wellfound.com/jobs "Senior Frontend Engineer" React Next.js Remote -BairesDev
+site:remoteok.com "Senior React Developer" TypeScript -BairesDev
+site:weworkremotely.com "Frontend Developer" React Next.js -BairesDev
+site:getmanfred.com React TypeScript Remote
+site:dice.com "Senior Frontend Developer" React TypeScript Remote
 ```
 
-### Priority 3: [YOUR_ADJACENT_ROLE_TYPE]
-
-Adjacent roles you could pivot into.
-
+**Spanish queries:**
 ```
-site:[YOUR_JOB_BOARD] "[YOUR_ADJACENT_TITLE_1]" [YOUR_KEY_SKILL] [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "[YOUR_ADJACENT_TITLE_2]" [YOUR_KEY_SKILL] [YOUR_CITY]
+site:getonbrd.com "Desarrollador Frontend Senior" React TypeScript
+site:linkedin.com/jobs "Desarrollador Frontend Senior" Colombia OR España OR Remoto -BairesDev -Bairesdev
+site:linkedin.com/jobs "Ingeniero Frontend" React TypeScript Remoto -BairesDev -Bairesdev
+site:infojobs.net "Frontend Developer" React TypeScript Remoto
+site:tecnoempleo.com "Frontend" React TypeScript Teletrabajo
 ```
 
-### Priority 4: Broader Technical / Consulting
+### Priority 2: Agentic Engineer / AI Applications Engineer
 
-Wider net for general technical roles.
+Cutting-edge specialization in AI agents, MCP, and AWS Bedrock.
 
+**English queries:**
 ```
-site:[YOUR_JOB_BOARD] [YOUR_KEY_SKILL] developer [YOUR_CITY]
-site:linkedin.com/jobs "[YOUR_KEY_SKILL] developer" [YOUR_CITY]
-site:[YOUR_JOB_BOARD] "technical consultant" [YOUR_DOMAIN] [YOUR_CITY]
+site:linkedin.com/jobs "AI Engineer" "Agents" OR "Bedrock" OR "MCP" Remote -BairesDev
+site:linkedin.com/jobs "Agentic Engineer" OR "AI Application Developer" Remote -BairesDev
+site:wellfound.com/jobs "AI Engineer" React Python Remote -BairesDev
+site:linkedin.com/jobs "Frontend Engineer" "AI" OR "LLM" Remote -BairesDev
+site:getmanfred.com "AI" OR "Agents" Remote
+```
+
+**Spanish queries:**
+```
+site:getonbrd.com "Ingeniero AI" OR "Desarrollador AI" Remoto
+site:linkedin.com/jobs "Ingeniero de Inteligencia Artificial" Remoto -BairesDev
+```
+
+### Priority 3: Fullstack Engineer (React / Next.js + Serverless / Node / Python)
+
+Fullstack roles leveraging cloud serverless, microfrontends, and APIs.
+
+**English queries:**
+```
+site:linkedin.com/jobs "Full Stack Developer" React Node AWS Remote -BairesDev
+site:linkedin.com/jobs "Full Stack Engineer" TypeScript Python Serverless Remote -BairesDev
+site:weworkremotely.com "Full Stack Engineer" React TypeScript -BairesDev
+```
+
+**Spanish queries:**
+```
+site:getonbrd.com "Desarrollador Full Stack" React TypeScript Remoto
+site:linkedin.com/jobs "Desarrollador Full Stack" React Node Remoto -BairesDev
+```
+
+### Priority 4: Frontend Tech Lead / Software Engineering Lead
+
+Leadership and architectural roles based on engineering lead experience at NTT DATA.
+
+**English queries:**
+```
+site:linkedin.com/jobs "Frontend Tech Lead" React TypeScript Remote -BairesDev
+site:linkedin.com/jobs "Software Engineering Lead" Frontend Remote -BairesDev
+```
+
+**Spanish queries:**
+```
+site:linkedin.com/jobs "Lider Tecnico Frontend" OR "Tech Lead Frontend" Colombia OR España OR Remoto -BairesDev
 ```
 
 ## Location Filter
 
-When evaluating results, verify the job location is within reasonable commute distance from your home. Define acceptable areas:
-- [YOUR_CITY] and surrounding areas
-- [ACCEPTABLE_AREA_1]
-- [ACCEPTABLE_AREA_2]
-- [BORDERLINE_AREA] (borderline - ~X min by transit)
-- [TOO_FAR_AREA] (too far)
+- **Ideal:** Remote Spain, Remote Colombia, Remote US, Remote Germany, Remote UK, or Global Remote (hiring in these regions)
+- **Acceptable:** Hybrid or on-site in Bogotá / Chía (Colombia), Madrid / Barcelona (Spain), London (UK), Berlin / Munich (Germany), or US tech hubs (with visa/remote contract support)
+- **Too far / Excluded:** Non-remote roles outside Spain, Colombia, US, Germany, and UK; any Danish or other non-targeted regional portals
+
+## Compensation Filter
+
+- Minimum baseline: **$3,500 USD/month** or **11,000,000 COP**
 
 ## Language Filter
 
-Your working languages and levels are in CLAUDE.md's Languages table. When filtering scraped results, apply `04-job-evaluation.md`'s Language Gate: a posting requiring a language you haven't declared at all is excluded; a posting requiring a higher level than you declared in a language you do work in is not excluded, flag it clearly instead (see `job-scraper/SKILL.md`'s Step 3 "Quick Fit Assessment" for how the flag surfaces in `/scrape` output). Postings simply *written* in a language you don't work in, that don't require it on the job, are fine.
+- Spanish (Native / C2)
+- English (Advanced / B2 - Professional Working Proficiency)
+- **Strict Constraint:** Only positions written in English or Spanish are allowed. Auto-exclude postings in German (even if in Germany), Danish, French, Portuguese, Japanese, or other non-English/non-Spanish languages, as well as roles requiring these as a mandatory language.
 
 ## Date Filter
 
-Only include jobs posted within the last 14 days, or with an application deadline that has not yet passed. If a posting date cannot be determined, include it but flag as "date unknown".
-
-## Adapting Queries
-
-If the user specifies a focus area, select queries from the matching category and also generate 2-3 custom queries for that focus. For example:
-- "/scrape [focus_area]" -> relevant category queries + custom focus-specific queries
+Only include jobs posted within the last 14 days, or with an active application deadline.

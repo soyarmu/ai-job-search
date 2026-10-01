@@ -1,0 +1,1104 @@
+import json
+import csv
+import os
+import sys
+import html
+import glob
+import re
+from pathlib import Path
+from datetime import datetime
+
+def norm(s):
+    if not s: return ""
+    return re.sub(r"[^a-z0-9]", "", str(s).lower())
+
+# Country scoping is OFF by default: the dashboard lists every scraped entry.
+# Set HIDE_OUT_OF_SCOPE=1 to drop entries whose status is `filtered` (postings
+# outside the accepted countries, marked by tools/apply_country_filter.py) or
+# `expired` (closed at source). Country is metadata here, not a gate - the
+# Country column and dropdown let the candidate narrow the view by hand.
+HIDDEN_STATUSES = {"filtered", "expired"} if os.environ.get("HIDE_OUT_OF_SCOPE", "").strip() not in ("", "0", "false", "False") else set()
+
+# The accepted countries, in the order the profile lists them. This order is the
+# display order too, so the country the candidate cares about leads the label.
+COUNTRY_NAMES = {
+    "co": "Colombia", "us": "United States", "es": "Spain",
+    "gb": "United Kingdom", "au": "Australia", "de": "Germany",
+}
+
+def country_label(job):
+    """Human-readable country for a seen_jobs entry, or a scope placeholder.
+
+    A posting open in 19 countries should not render as nineteen codes: the
+    accepted countries are named, the rest are counted, and anything that names
+    no country falls back to its own location text.
+    """
+    codes = job.get("countries") or ([job["country"]] if job.get("country") else [])
+    codes = [c for c in codes if c]
+    if codes:
+        accepted = [c for c in COUNTRY_NAMES if c in codes]
+        extra = len(codes) - len(accepted)
+        label = ", ".join(COUNTRY_NAMES[c] for c in accepted)
+        if extra:
+            label = f"{label} (+{extra} more)" if label else f"{extra} countries"
+        return label or ", ".join(c.upper() for c in codes)
+    loc = (job.get("location") or "").strip()
+    return loc or "Global / Remote"
+
+def is_file_exists(pattern):
+    try:
+        return len(glob.glob(pattern)) > 0
+    except:
+        return False
+
+def generate_dashboard(out_path_str="reports/application-dashboard.html"):
+    out_path = Path(out_path_str)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # 1. Load Tracker CSV
+    tracker = []
+    if os.path.exists("job_search_tracker.csv"):
+        with open("job_search_tracker.csv", "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                tracker.append(row)
+
+    # 2. Load seen_jobs.json
+    seen_jobs = {}
+    if os.path.exists("job_scraper/seen_jobs.json"):
+        try:
+            with open("job_scraper/seen_jobs.json", "r", encoding="utf-8") as f:
+                seen_jobs = json.load(f).get("seen", {})
+        except Exception as e:
+            sys.stderr.write(f"Warning loading seen_jobs.json: {e}\n")
+
+    # Build merged records
+    merged_records = []
+    matched_seen_keys = set()
+
+    # Map tracker rows
+    for row in tracker:
+        company = row.get("company", "")
+        role = row.get("role", "")
+        source_url = row.get("source", "")
+        status_raw = (row.get("status", "") or "").strip().lower()
+
+        matched_job = None
+        matched_key = None
+
+        # Match by URL
+        if source_url and source_url.startswith("http"):
+            norm_url = source_url.rstrip("/")
+            for k, job in seen_jobs.items():
+                if job.get("url") and job.get("url").rstrip("/") == norm_url:
+                    matched_job = job
+                    matched_key = k
+                    break
+
+        # Match by company + role fuzzy match
+        if not matched_job and company and role:
+            norm_cr = norm(company) + norm(role)
+            for k, job in seen_jobs.items():
+                norm_jk = norm(job.get("company", "")) + norm(job.get("title", ""))
+                if norm_cr == norm_jk:
+                    matched_job = job
+                    matched_key = k
+                    break
+
+        # Dynamic docs existence check
+        co_slug = norm(company)
+        ro_slug = norm(role)
+        has_cv = bool(row.get("cv_file")) or is_file_exists(f"cv/main_{co_slug}_{ro_slug}.*") or is_file_exists(f"documents/applications/{co_slug}_{ro_slug}/cv.*")
+        has_cl = bool(row.get("cover_letter_file")) or is_file_exists(f"cover_letters/cover_{co_slug}_{ro_slug}.*") or is_file_exists(f"documents/applications/{co_slug}_{ro_slug}/cover_letter.*")
+
+        # Load outcome details
+        stages_reached = []
+        outcome_notes = ""
+        outcome_path = f"documents/applications/{co_slug}_{ro_slug}/outcome.md"
+        if os.path.exists(outcome_path):
+            try:
+                with open(outcome_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    for m in re.finditer(r"-\s*\[([ xX])\]\s*(.+)", content):
+                        if m.group(1).lower() == "x":
+                            stages_reached.append(m.group(2).strip())
+                    outcome_notes = content
+            except:
+                pass
+
+        record = {
+            "type": "application",
+            "date_found": matched_job.get("first_seen") if matched_job else row.get("date"),
+            "date_applied": row.get("date"),
+            "company": company,
+            "role": role,
+            "sector": row.get("sector") or (matched_job.get("sector") if matched_job else "") or "—",
+            "channel": row.get("channel") or "—",
+            "status": row.get("status") or "drafted",
+            "notes": row.get("notes") or "",
+            "source": source_url or "—",
+            "deadline": row.get("deadline") or (matched_job.get("deadline") if matched_job else "") or "—",
+            "fit_rating": row.get("fit_rating") or (matched_job.get("fit") if matched_job else "") or "—",
+            "rank_score": matched_job.get("rank_score") if matched_job else None,
+            "rank_verdict": matched_job.get("rank_verdict") if matched_job else None,
+            "strengths": matched_job.get("strengths") if matched_job else None,
+            "gaps": matched_job.get("gaps") if matched_job else None,
+            "requirements": matched_job.get("requirements") if matched_job else None,
+            "portal": matched_job.get("portal") if matched_job else None,
+            "country": country_label(matched_job) if matched_job else "—",
+            "has_cv": has_cv,
+            "has_cl": has_cl,
+            "stages_reached": stages_reached,
+            "outcome_notes": outcome_notes,
+        }
+
+        if matched_key:
+            matched_seen_keys.add(matched_key)
+
+        merged_records.append(record)
+
+    # Include unapplied seen_jobs as Opportunities
+    hidden_count = 0
+    for k, job in seen_jobs.items():
+        if k in matched_seen_keys:
+            continue
+        if (job.get("status") or "new") in HIDDEN_STATUSES:
+            hidden_count += 1
+            continue
+        merged_records.append({
+            "type": "opportunity",
+            "date_found": job.get("first_seen") or job.get("posted_date") or "—",
+            "date_applied": "—",
+            "company": job.get("company", ""),
+            "role": job.get("title", ""),
+            "sector": "—",
+            "channel": "—",
+            "status": job.get("status") or "new",
+            "notes": "",
+            "source": job.get("url") or "—",
+            "deadline": job.get("deadline") or "—",
+            "fit_rating": job.get("fit") or "—",
+            "rank_score": job.get("rank_score"),
+            "rank_verdict": job.get("rank_verdict"),
+            "strengths": job.get("strengths"),
+            "gaps": job.get("gaps"),
+            "requirements": job.get("requirements"),
+            "portal": job.get("portal"),
+            "country": country_label(job),
+            "has_cv": False,
+            "has_cl": False,
+            "stages_reached": [],
+            "outcome_notes": "",
+        })
+
+    # Stats Computation
+    canonical_buckets = {
+        "drafted": "Drafted",
+        "applied": "Active",
+        "interview": "Interview",
+        "offer": "Offer",
+        "hired": "Hired",
+        "rejected": "Rejected/Closed",
+        "no_response": "Rejected/Closed",
+        "no response": "Rejected/Closed",
+        "offer_declined": "Rejected/Closed",
+        "offer declined": "Rejected/Closed",
+        "withdrawn": "Rejected/Closed",
+    }
+
+    stats = {
+        "total_applications": 0,
+        "drafted_count": 0,
+        "active_count": 0,
+        "interview_count": 0,
+        "offer_count": 0,
+        "hired_count": 0,
+        "rejected_count": 0,
+        "opportunities_count": 0,
+        "by_sector": {},
+        "by_channel": {"portal": 0, "online": 0, "referral": 0, "other": 0},
+        "by_year": {},
+        "funnel": {"applied": 0, "interview": 0, "offer": 0, "hired": 0},
+    }
+
+    for r in merged_records:
+        if r["type"] == "opportunity":
+            if r["status"] in ("new", "ranked"):
+                stats["opportunities_count"] += 1
+            continue
+
+        status_lower = r["status"].strip().lower()
+        bucket = canonical_buckets.get(status_lower, "Rejected/Closed")
+
+        if bucket == "Drafted":
+            stats["drafted_count"] += 1
+            continue
+
+        stats["total_applications"] += 1
+
+        if bucket == "Active": stats["active_count"] += 1
+        elif bucket == "Interview": stats["interview_count"] += 1
+        elif bucket == "Offer": stats["offer_count"] += 1
+        elif bucket == "Hired": stats["hired_count"] += 1
+        elif bucket == "Rejected/Closed": stats["rejected_count"] += 1
+
+        # Sector
+        sector = r["sector"]
+        if sector and sector != "—":
+            stats["by_sector"][sector] = stats["by_sector"].get(sector, 0) + 1
+
+        # Channel
+        ch = (r["channel"] or "").strip().lower()
+        if "portal" in ch: stats["by_channel"]["portal"] += 1
+        elif "online" in ch: stats["by_channel"]["online"] += 1
+        elif "referral" in ch: stats["by_channel"]["referral"] += 1
+        else: stats["by_channel"]["other"] += 1
+
+        # Year
+        date_str = r["date_applied"]
+        year = "Unknown"
+        if date_str and len(date_str) >= 4:
+            m = re.match(r"^(\d{4})", date_str)
+            if m: year = m.group(1)
+        stats["by_year"][year] = stats["by_year"].get(year, 0) + 1
+
+        # Funnel
+        stats["funnel"]["applied"] += 1
+        is_interview = (bucket in ("Interview", "Offer", "Hired")) or any("interview" in st.lower() or "screen" in st.lower() for st in r["stages_reached"])
+        is_offer = (bucket in ("Offer", "Hired")) or any("offer" in st.lower() for st in r["stages_reached"])
+        is_hired = (bucket == "Hired") or any("hired" in st.lower() or "accept" in st.lower() for st in r["stages_reached"])
+
+        if is_interview: stats["funnel"]["interview"] += 1
+        if is_offer: stats["funnel"]["offer"] += 1
+        if is_hired: stats["funnel"]["hired"] += 1
+
+    # Rejection rate
+    rejections = 0
+    final_outcomes = 0
+    for r in merged_records:
+        if r["type"] == "opportunity": continue
+        st = r["status"].strip().lower()
+        if st in ("rejected", "no_response", "no response"):
+            rejections += 1
+            final_outcomes += 1
+        elif st in ("hired", "offer_declined", "offer declined", "withdrawn"):
+            final_outcomes += 1
+
+    rejection_rate = f"{(rejections / final_outcomes * 100):.1f}%" if final_outcomes > 0 else "0.0%"
+    funnel_rate = f"{(stats['funnel']['interview'] / stats['total_applications'] * 100):.1f}%" if stats["total_applications"] > 0 else "0.0%"
+
+    # HTML assembly
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    iso_date = datetime.now().strftime("%Y-%m-%d")
+    records_json = json.dumps(merged_records, default=str)
+
+    # Compute percentages safely
+    pct_interview = (stats['funnel']['interview']/stats['funnel']['applied']*280 if stats['funnel']['applied'] > 0 else 0)
+    pct_offer = (stats['funnel']['offer']/stats['funnel']['applied']*280 if stats['funnel']['applied'] > 0 else 0)
+    pct_hired = (stats['funnel']['hired']/stats['funnel']['applied']*280 if stats['funnel']['applied'] > 0 else 0)
+
+    # Using standard string replacements instead of f-string formatting to prevent JavaScript syntax conflict errors
+    html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Search Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --primary: #3b82f6;
+            --drafted: #64748b;
+            --active: #3b82f6;
+            --interview: #f59e0b;
+            --offer: #8b5cf6;
+            --hired: #22c55e;
+            --rejected: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 1.5rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+        }
+
+        .generated {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Stat Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-left: 5px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .stat-num {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        /* Chart Grid */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        /* Tabs styling */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-radius: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        /* Filters & Table container */
+        .table-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-input {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            min-width: 200px;
+            flex-grow: 1;
+        }
+
+        .filter-select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            background-color: #ffffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background-color: #f1f5f9;
+            color: var(--text-secondary);
+            font-weight: 700;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr.row-applied:hover, tr.row-opportunity:hover {
+            background-color: #f8fafc;
+            cursor: pointer;
+        }
+
+        tr.row-applied:nth-child(even), tr.row-opportunity:nth-child(even) {
+            background-color: #fafbfd;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: capitalize;
+        }
+
+        .pill-drafted { background-color: #e2e8f0; color: #475569; }
+        .pill-active { background-color: #dbeafe; color: #1e40af; }
+        .pill-interview { background-color: #fef3c7; color: #92400e; }
+        .pill-offer { background-color: #f3e8ff; color: #6b21a8; }
+        .pill-hired { background-color: #dcfce7; color: #166534; }
+        .pill-rejected { background-color: #fee2e2; color: #991b1b; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            font-size: 0.75rem;
+        }
+
+        .badge-success { background-color: #dcfce7; color: #15803d; }
+        .badge-danger { background-color: #fee2e2; color: #b91c1c; }
+
+        /* Detailed Accordion Drawer */
+        .drawer-row {
+            background-color: #f8fafc !important;
+            display: none;
+        }
+
+        .drawer-content {
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .drawer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .drawer-section h4 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.25rem;
+        }
+
+        .drawer-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .drawer-section li {
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: background 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: #fee2e2;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>🔍 Job Search Dashboard</h1>
+            <div class="generated font-semibold">Generated: __GENERATED_DATE__</div>
+        </div>
+    </header>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+        <div class="stat-card" style="border-left-color: var(--primary)">
+            <div class="stat-num" id="stat-total">__STAT_TOTAL__</div>
+            <div class="stat-label">Applications Sent</div>
+        </div>
+        <div class="stat-card" style="border-left-color: var(--drafted)">
+            <div class="stat-num" id="stat-drafted">__STAT_DRAFTED__</div>
+            <div class="stat-label">Drafted Docs</div>
+        </div>
+        <div class="stat-card" style="border-left-color: var(--active)">
+            <div class="stat-num" id="stat-active">__STAT_ACTIVE__</div>
+            <div class="stat-label">Active (Submitted)</div>
+        </div>
+        <div class="stat-card" style="border-left-color: var(--interview)">
+            <div class="stat-num" id="stat-interview">__STAT_INTERVIEW__</div>
+            <div class="stat-label">Interviews Scheduled</div>
+        </div>
+        <div class="stat-card" style="border-left-color: var(--hired)">
+            <div class="stat-num" id="stat-hired">__STAT_HIRED__</div>
+            <div class="stat-label">Offers Hired</div>
+        </div>
+        <div class="stat-card" style="border-left-color: var(--primary)">
+            <div class="stat-num" id="stat-opportunities">__STAT_OPPORTUNITIES__</div>
+            <div class="stat-label">Opportunities Backlog</div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-grid">
+        <!-- Status Doughnut -->
+        <div class="chart-card">
+            <h3>Status Breakdown</h3>
+            <svg viewBox="0 0 100 100" role="img" aria-label="Status breakdown doughnut chart" width="100%" height="220px">
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f1f5f9" stroke-width="20" />
+                <g id="doughnut-segments"></g>
+            </svg>
+        </div>
+
+        <!-- Funnel -->
+        <div class="chart-card">
+            <h3>Application Funnel</h3>
+            <svg viewBox="0 0 400 150" role="img" aria-label="Application pipeline funnel" width="100%" height="220px">
+                <text x="10" y="25" fill="var(--text-color)" font-weight="700" font-size="12">Applied: __FUNNEL_APPLIED__</text>
+                <rect x="100" y="12" width="280" height="18" fill="var(--active)" rx="3" />
+
+                <text x="10" y="60" fill="var(--text-color)" font-weight="700" font-size="12">Interview: __FUNNEL_INTERVIEW__</text>
+                <rect x="100" y="47" width="__PCT_INTERVIEW__" height="18" fill="var(--interview)" rx="3" />
+
+                <text x="10" y="95" fill="var(--text-color)" font-weight="700" font-size="12">Offer: __FUNNEL_OFFER__</text>
+                <rect x="100" y="82" width="__PCT_OFFER__" height="18" fill="var(--offer)" rx="3" />
+
+                <text x="10" y="130" fill="var(--text-color)" font-weight="700" font-size="12">Hired: __FUNNEL_HIRED__</text>
+                <rect x="100" y="117" width="__PCT_HIRED__" height="18" fill="var(--hired)" rx="3" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- Interactive Table & Tabs -->
+    <div class="table-container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('all')">🌐 All Entries</button>
+            <button class="tab-btn" onclick="switchTab('applications')">🎯 Applications</button>
+            <button class="tab-btn" onclick="switchTab('opportunities')">✨ Scraped Opportunities</button>
+            <button class="tab-btn" onclick="switchTab('archived')">📦 Archived / Closed</button>
+        </div>
+
+        <div class="filter-row">
+            <input type="text" id="search-input" class="filter-input" placeholder="Search Company, Role, Country, Sector, Notes..." oninput="applyFilters()">
+            <select id="status-select" class="filter-select" onchange="applyFilters()">
+                <option value="">All Statuses</option>
+                <option value="drafted">Drafted</option>
+                <option value="applied">Applied / Active</option>
+                <option value="interview">Interview</option>
+                <option value="offer">Offer</option>
+                <option value="hired">Hired</option>
+                <option value="rejected">Rejected/Closed</option>
+                <option value="new">New Opportunity</option>
+                <option value="ranked">Ranked Opportunity</option>
+            </select>
+            <select id="sector-select" class="filter-select" onchange="applyFilters()">
+                <option value="">All Sectors</option>
+            </select>
+            <select id="country-select" class="filter-select" onchange="applyFilters()">
+                <option value="">All Countries</option>
+            </select>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table id="main-table">
+                <thead>
+                    <tr>
+                        <th>Date Found</th>
+                        <th>Date Applied</th>
+                        <th style="text-align: center;">CV</th>
+                        <th style="text-align: center;">CL</th>
+                        <th>Company</th>
+                        <th>Role</th>
+                        <th>Country</th>
+                        <th>Sector</th>
+                        <th>Channel</th>
+                        <th>Status</th>
+                        <th style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Filled by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        Generated by Claude Code · ai-job-search · __ISO_DATE__
+    </footer>
+
+    <script>
+        const records = __RECORDS_JSON__;
+        let currentTab = 'all';
+
+        // Initialize unique sectors
+        const sectorSelect = document.getElementById('sector-select');
+        const sectors = [...new Set(records.map(r => r.sector).filter(s => s && s !== '—'))].sort();
+        sectors.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s;
+            opt.textContent = s;
+            sectorSelect.appendChild(opt);
+        });
+
+        // Initialize unique countries. Multi-country postings ("Spain, Germany")
+        // are split so each country is selectable on its own, which is how the
+        // candidate thinks about scope - not as one combined label.
+        const countrySelect = document.getElementById('country-select');
+        const countries = [...new Set(
+            records.flatMap(r => String(r.country || '').split(',').map(c => c.trim()))
+        )].filter(c => c && c !== '—').sort();
+        countries.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c;
+            opt.textContent = c;
+            countrySelect.appendChild(opt);
+        });
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            applyFilters();
+        }
+
+        function updateStats() {
+            let total = 0;
+            let drafted = 0;
+            let active = 0;
+            let interview = 0;
+            let hired = 0;
+            let opportunities = 0;
+
+            records.forEach(r => {
+                if (r.type === 'opportunity') {
+                    if (['new', 'ranked'].includes(r.status)) {
+                        opportunities++;
+                    }
+                    return;
+                }
+
+                const bucket = getNormalizedStatusBucket(r.status);
+                if (bucket === 'Drafted') {
+                    drafted++;
+                } else {
+                    total++;
+                    if (bucket === 'Active') active++;
+                    else if (bucket === 'Interview') interview++;
+                    else if (bucket === 'Hired') hired++;
+                }
+            });
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-drafted').textContent = drafted;
+            document.getElementById('stat-active').textContent = active;
+            document.getElementById('stat-interview').textContent = interview;
+            document.getElementById('stat-hired').textContent = hired;
+            document.getElementById('stat-opportunities').textContent = opportunities;
+        }
+
+        function deleteRow(idx) {
+            const company = records[idx].company;
+            const role = records[idx].role;
+            if (confirm(`Are you sure you want to delete the entry for "${company}" - "${role}"?`)) {
+                records.splice(idx, 1);
+                applyFilters();
+                updateStats();
+                drawDoughnut();
+            }
+        }
+
+        function getNormalizedStatusBucket(status) {
+            const st = (status || '').toLowerCase().trim();
+            if (st === 'drafted') return 'Drafted';
+            if (st === 'applied') return 'Active';
+            if (st === 'interview') return 'Interview';
+            if (st === 'offer') return 'Offer';
+            if (st === 'hired') return 'Hired';
+            if (['rejected', 'no_response', 'no response', 'offer_declined', 'offer declined', 'withdrawn'].includes(st)) return 'Rejected/Closed';
+            return 'Rejected/Closed';
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const statusFilter = document.getElementById('status-select').value;
+            const sectorFilter = document.getElementById('sector-select').value;
+            const countryFilter = document.getElementById('country-select').value;
+
+            const filtered = records.filter(r => {
+                // Tab Filter
+                if (currentTab === 'applications' && r.type !== 'application') return false;
+                if (currentTab === 'opportunities' && (r.type !== 'opportunity' || !['new', 'ranked'].includes(r.status))) return false;
+                if (currentTab === 'archived') {
+                    const isArchivedApp = r.type === 'application' && getNormalizedStatusBucket(r.status) === 'Rejected/Closed';
+                    const isArchivedOpp = r.type === 'opportunity' && ['skipped', 'expired', 'filtered'].includes(r.status);
+                    if (!isArchivedApp && !isArchivedOpp) return false;
+                }
+
+                // Search Box Filter
+                const txt = `${r.company} ${r.role} ${r.sector} ${r.country} ${r.notes}`.toLowerCase();
+                if (search && !txt.includes(search)) return false;
+
+                // Status dropdown filter
+                if (statusFilter) {
+                    if (statusFilter === 'applied') {
+                        if (r.type !== 'application' || getNormalizedStatusBucket(r.status) !== 'Active') return false;
+                    } else if (statusFilter === 'rejected') {
+                        if (r.type !== 'application' || getNormalizedStatusBucket(r.status) !== 'Rejected/Closed') return false;
+                    } else if (statusFilter === 'new' || statusFilter === 'ranked') {
+                        if (r.type !== 'opportunity' || r.status !== statusFilter) return false;
+                    } else {
+                        if (r.type !== 'application' || r.status !== statusFilter) return false;
+                    }
+                }
+
+                // Sector dropdown filter
+                if (sectorFilter && r.sector !== sectorFilter) return false;
+
+                // Country dropdown filter (substring match, so a multi-country
+                // posting still matches each of the countries it names)
+                if (countryFilter) {
+                    const recCountries = String(r.country || '').split(',').map(c => c.trim());
+                    if (!recCountries.includes(countryFilter)) return false;
+                }
+
+                return true;
+            });
+
+            renderTable(filtered);
+        }
+
+        function toggleRow(id) {
+            const drawer = document.getElementById(`drawer-${id}`);
+            if (drawer.style.display === 'table-row') {
+                drawer.style.display = 'none';
+            } else {
+                drawer.style.display = 'table-row';
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:2rem; color:var(--text-secondary);">No matches found</td></tr>';
+                return;
+            }
+
+            data.forEach((r, idx) => {
+                const statusBucket = r.type === 'application' ? getNormalizedStatusBucket(r.status) : 'Opportunity';
+                const statusClass = r.type === 'application' ? statusBucket.toLowerCase().replace('/', '-') : 'drafted';
+                const cvBadge = r.has_cv ? '<span class="badge badge-success">📄</span>' : '<span class="badge badge-danger">❌</span>';
+                const clBadge = r.has_cl ? '<span class="badge badge-success">✉️</span>' : '<span class="badge badge-danger">❌</span>';
+
+                const trClass = r.type === 'application' ? 'row-applied' : 'row-opportunity';
+
+                const companyEsc = htmlEscape(r.company);
+                const roleEsc = htmlEscape(r.role);
+                const sectorEsc = htmlEscape(r.sector);
+                const channelEsc = htmlEscape(r.channel);
+                const statusLabel = r.type === 'application'
+                    ? (r.rank_score ? `${statusBucket} (Ranked: ${r.rank_score})` : statusBucket)
+                    : (r.rank_score ? `Opportunity (Ranked: ${r.rank_score})` : `Opportunity (${r.status})`);
+
+                const hasLink = r.source && r.source.startsWith('http');
+                const companyDisplay = hasLink
+                    ? `<a href="${r.source}" target="_blank" onclick="event.stopPropagation()" class="btn-link" style="color: inherit; text-decoration: underline;">${companyEsc} 🔗</a>`
+                    : companyEsc;
+
+                const mainRow = `
+                    <tr class="${trClass}" onclick="toggleRow(${idx})">
+                        <td>${r.date_found}</td>
+                        <td>${r.date_applied}</td>
+                        <td style="text-align: center;">${cvBadge}</td>
+                        <td style="text-align: center;">${clBadge}</td>
+                        <td style="font-weight: 700;">${companyDisplay}</td>
+                        <td>${roleEsc}</td>
+                        <td>${htmlEscape(r.country || '—')}</td>
+                        <td><span class="pill" style="background-color: #f1f5f9;">${sectorEsc}</span></td>
+                        <td>${channelEsc}</td>
+                        <td><span class="pill pill-${statusClass}">${statusLabel}</span></td>
+                        <td style="text-align: center;" onclick="event.stopPropagation()">
+                            <button class="btn-delete" onclick="deleteRow(${idx})" title="Delete entry">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+
+                // Sub-escapes
+                let cleanCompany = r.company || '';
+                let cleanRole = r.role || '';
+                let searchComp = encodeURIComponent(cleanCompany + ' recruiter');
+                let searchPeer = encodeURIComponent(cleanCompany + ' ' + cleanRole.split(' ')[0]);
+
+                let linkSection = r.source.startsWith('http') ? `<li>Link: <a href="${r.source}" target="_blank" class="btn-link">🌐 Original Posting</a></li>` : '';
+
+                let outcomeSec = '';
+                if (r.notes || r.outcome_notes) {
+                    outcomeSec = `
+                    <div class="drawer-section" style="margin-top: 1.5rem;">
+                        <h4>📝 Traceability & Follow-up Notes</h4>
+                        <p style="white-space: pre-wrap; font-size: 0.875rem; color: var(--text-color);">${htmlEscape(r.notes || r.outcome_notes)}</p>
+                    </div>`;
+                }
+
+                let strengthsLi = (r.strengths || []).map(s => `<li>• ${htmlEscape(s)}</li>`).join('') || '<li>—</li>';
+                let gapsLi = (r.gaps || []).map(g => `<li>• ${htmlEscape(g)}</li>`).join('') || '<li>—</li>';
+                let reqsLi = r.requirements ? `<li>${htmlEscape(r.requirements)}</li>` : '<li>—</li>';
+
+                const drawerRow = `
+                    <tr class="drawer-row" id="drawer-${idx}">
+                        <td colspan="10">
+                            <div class="drawer-content">
+                                <div class="drawer-grid">
+                                    <div class="drawer-section">
+                                        <h4>🎯 Match Assessment</h4>
+                                        <p style="margin-bottom: 0.5rem;">Fit rating: <strong>${r.fit_rating}</strong> ${r.rank_score ? `(Score: <strong>${r.rank_score}/100</strong>)` : ''}</p>
+                                        <p style="margin-bottom: 0.5rem; font-style: italic;">${r.rank_verdict || ''}</p>
+                                        <div style="margin-top: 0.5rem;">
+                                            <p style="font-weight:700; font-size:0.8rem; text-transform:uppercase;">Strengths:</p>
+                                            <ul style="margin-bottom: 0.5rem;">${strengthsLi}</ul>
+                                            <p style="font-weight:700; font-size:0.8rem; text-transform:uppercase;">Gaps:</p>
+                                            <ul>${gapsLi}</ul>
+                                        </div>
+                                    </div>
+                                    <div class="drawer-section">
+                                        <h4>📋 Requirements & Deadline</h4>
+                                        <p style="margin-bottom: 0.5rem;">Deadline: <strong>${r.deadline}</strong></p>
+                                        <ul>${reqsLi}</ul>
+                                        ${r.portal ? `<p style="margin-top: 0.5rem; font-size: 0.8rem; color:var(--text-secondary);">Source Portal: ${htmlEscape(r.portal)}</p>` : ''}
+                                    </div>
+                                    <div class="drawer-section">
+                                        <h4>⚡ Actionable Referral Tools</h4>
+                                        <ul style="margin-bottom: 1rem;">
+                                            <li><a href="https://www.linkedin.com/search/results/people/?keywords=${searchComp}" target="_blank" class="btn-link">🔍 LinkedIn Recruiter Search</a></li>
+                                            <li><a href="https://www.linkedin.com/search/results/people/?keywords=${searchPeer}" target="_blank" class="btn-link">🔍 LinkedIn Peer/Team Search</a></li>
+                                        </ul>
+                                        <h4>📁 Tailored Documents</h4>
+                                        <ul>
+                                            <li>CV: <strong>${r.has_cv ? '✅ tailorable/main_example' : '❌ none'}</strong></li>
+                                            <li>Letter: <strong>${r.has_cl ? '✅ tailorable/cover_example' : '❌ none'}</strong></li>
+                                            ${linkSection}
+                                        </ul>
+                                    </div>
+                                </div>
+                                ${outcomeSec}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+                tbody.insertAdjacentHTML('beforeend', mainRow + drawerRow);
+            });
+        }
+
+        function htmlEscape(str) {
+            if (!str) return '—';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function drawDoughnut() {
+            const counts = {
+                'Active': 0,
+                'Interview': 0,
+                'Offer': 0,
+                'Hired': 0,
+                'Rejected/Closed': 0,
+                'Drafted': 0
+            };
+
+            records.forEach(r => {
+                if (r.type === 'opportunity') return;
+                const bucket = getNormalizedStatusBucket(r.status);
+                if (counts.hasOwnProperty(bucket)) {
+                    counts[bucket]++;
+                }
+            });
+
+            const colors = {
+                'Active': 'var(--active)',
+                'Interview': 'var(--interview)',
+                'Offer': 'var(--offer)',
+                'Hired': 'var(--hired)',
+                'Rejected/Closed': 'var(--rejected)',
+                'Drafted': 'var(--drafted)'
+            };
+
+            const total = Object.values(counts).reduce((a, b) => a + b, 0);
+            const container = document.getElementById('doughnut-segments');
+            if (total === 0) {
+                container.innerHTML = '<text x="50" y="55" text-anchor="middle" font-size="6" fill="var(--text-secondary)">No applications yet</text>';
+                return;
+            }
+
+            let accumulatedPercent = 0;
+            let segmentsHtml = '';
+
+            Object.entries(counts).forEach(([label, count]) => {
+                if (count === 0) return;
+                const percent = count / total;
+                const strokeDashArray = `${percent * 251.2} 251.2`;
+                const strokeDashOffset = `${-accumulatedPercent * 251.2}`;
+
+                segmentsHtml += `
+                    <circle cx="50" cy="50" r="40" fill="transparent"
+                            stroke="${colors[label]}" stroke-width="12"
+                            stroke-dasharray="${strokeDashArray}"
+                            stroke-dashoffset="${strokeDashOffset}"
+                            transform="rotate(-90 50 50)">
+                        <title>${label}: ${count} (${(percent*100).toFixed(1)}%)</title>
+                    </circle>
+                `;
+                accumulatedPercent += percent;
+            });
+
+            segmentsHtml += `<text x="50" y="53" text-anchor="middle" font-size="8" font-weight="800" fill="var(--text-color)">${total}</text>`;
+            segmentsHtml += `<text x="50" y="60" text-anchor="middle" font-size="4" font-weight="700" fill="var(--text-secondary)">Total Row</text>`;
+            container.innerHTML = segmentsHtml;
+        }
+
+        applyFilters();
+        drawDoughnut();
+    </script>
+</body>
+</html>"""
+
+    # Direct String Replacement to safely render values
+    html_content = html_content.replace("__GENERATED_DATE__", now_str)
+    html_content = html_content.replace("__STAT_TOTAL__", str(stats['total_applications']))
+    html_content = html_content.replace("__STAT_DRAFTED__", str(stats['drafted_count']))
+    html_content = html_content.replace("__STAT_ACTIVE__", str(stats['active_count']))
+    html_content = html_content.replace("__STAT_INTERVIEW__", str(stats['interview_count']))
+    html_content = html_content.replace("__STAT_OFFER__", str(stats['offer_count']))
+    html_content = html_content.replace("__STAT_HIRED__", str(stats['hired_count']))
+    html_content = html_content.replace("__STAT_REJECTED__", str(stats['rejected_count']))
+    html_content = html_content.replace("__STAT_OPPORTUNITIES__", str(stats['opportunities_count']))
+
+    html_content = html_content.replace("__FUNNEL_APPLIED__", str(stats['funnel']['applied']))
+    html_content = html_content.replace("__FUNNEL_INTERVIEW__", str(stats['funnel']['interview']))
+    html_content = html_content.replace("__FUNNEL_OFFER__", str(stats['funnel']['offer']))
+    html_content = html_content.replace("__FUNNEL_HIRED__", str(stats['funnel']['hired']))
+
+    html_content = html_content.replace("__PCT_INTERVIEW__", f"{pct_interview:.0f}")
+    html_content = html_content.replace("__PCT_OFFER__", f"{pct_offer:.0f}")
+    html_content = html_content.replace("__PCT_HIRED__", f"{pct_hired:.0f}")
+
+    html_content = html_content.replace("__ISO_DATE__", iso_date)
+    html_content = html_content.replace("__RECORDS_JSON__", records_json)
+
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+    print(f"Dashboard generated: {out_path}")
+    print(f"Summary:")
+    print(f"- Applications sent: {stats['total_applications']} · drafted, not yet sent: {stats['drafted_count']}")
+    print(f"- Active: {stats['active_count']} · Interview: {stats['interview_count']} · Hired: {stats['hired_count']} · Rejected/Closed: {stats['rejected_count']}")
+    print(f"- Opportunities: {stats['opportunities_count']}")
+    print(f"- Funnel: {funnel_rate} progressed past resume screen")
+    if hidden_count:
+        print(f"- Hidden: {hidden_count} filtered/expired entries (HIDE_OUT_OF_SCOPE=1; still tracked in seen_jobs.json)")
+
+if __name__ == "__main__":
+    out_arg = "reports/application-dashboard.html"
+    if len(sys.argv) > 1 and not sys.argv[1].startswith("-"):
+        out_arg = sys.argv[1]
+    generate_dashboard(out_arg)

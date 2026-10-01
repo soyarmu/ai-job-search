@@ -14,44 +14,47 @@ Keep answers to 1-2 minutes. Be specific. End with what you learned or would do 
 
 ## Ready-Made STAR Examples
 
-<!-- These are populated by /setup from your actual experience. Below are templates showing the format. -->
+### 1. Autonomous AI Agent for Ticket Resolution (AWS Bedrock, Serverless, Agentic Workflows)
+**S:** A major entertainment-industry client needed to automate the resolution of high-volume technical support tickets to reduce resolution time and operational overhead.
+**T:** As Web UI Developer, I was tasked with designing and implementing an end-to-end autonomous AI agent on AWS Bedrock capable of retrieving documentation and resolving support requests automatically.
+**A:** Architected a serverless solution integrating AWS Bedrock with Knowledge Bases, vector embeddings, and optimized document chunking. Integrated Amazon S3 as the document repository, AWS Lambda for execution, and Amazon API Gateway with IAM for secure endpoints. Defined the agentic orchestration and authored comprehensive architecture docs.
+**R:** The AI agent successfully deployed to production, enabling automated context retrieval and autonomous ticket resolution, significantly cutting manual triage time.
+**Use for:** "Tell me about a complex AI/cloud project you built", "How do you handle architectural decisions?", "Describe experience with AWS Bedrock / AI agents."
 
-### 1. [PROJECT_NAME] ([SKILL_DEMONSTRATED])
-**S:** [CONTEXT - what was happening, what was the problem]
-**T:** [YOUR RESPONSIBILITY - what you specifically needed to do]
-**A:** [WHAT YOU DID - specific actions, tools, methods]
-**R:** [OUTCOME - measurable results, adoption, impact]
-**Use for:** "[QUESTION_TYPE_1]", "[QUESTION_TYPE_2]"
+### 2. British Airways Check-In Platform & Mobile App Launch (React, TypeScript, WCAG, Amadeus)
+**S:** British Airways was preparing a major version release of their mobile app (iOS/Android) and web Check-In platform, requiring high accessibility, strict regulatory compliance, and seamless backend integration.
+**T:** Implement complex Check-In business rules, ensure WCAG accessibility, and deliver robust UI components under tight release deadlines.
+**A:** Implemented immigration status and travel document validation rules integrated with Amadeus and airline APIs. Developed WCAG-compliant mobile-first components and microfrontends. Integrated React Hook Form with Zod for rigorous client-side data validation, and Adobe Analytics DataLayer for telemetry. Wrote automated test suites with Vitest and React Testing Library.
+**R:** Shipped the major version release to production on schedule, ensuring seamless check-in for millions of passengers with zero critical compliance regressions.
+**Use for:** "Tell me about a time you handled complex business logic", "How do you ensure web accessibility and frontend quality?", "Describe your experience with React/TypeScript in high-stakes environments."
 
-### 2. [PROJECT_NAME] ([SKILL_DEMONSTRATED])
-**S:** [CONTEXT]
-**T:** [YOUR RESPONSIBILITY]
-**A:** [WHAT YOU DID]
-**R:** [OUTCOME]
-**Use for:** "[QUESTION_TYPE_1]", "[QUESTION_TYPE_2]"
+### 3. Frontend Team Leadership & Mentorship (Agile Leadership, Clean Code, SOLID)
+**S:** At NTT DATA on the Porvenir SA account, a multidisciplinary team needed alignment on code quality, task velocity, and standard engineering practices.
+**T:** As Software Engineering Lead, I was responsible for guiding developers, coordinating sprints, and improving technical delivery standards.
+**A:** Led sprint planning and backlog refinement, conducted rigorous code reviews, and mentored junior and mid-level developers. Introduced Clean Code principles, SOLID architecture patterns, and GitFlow branching strategies.
+**R:** Elevated overall code maintainability, reduced defect leakage during testing phases, and fostered a collaborative, high-standard team culture.
+**Use for:** "Describe your leadership or mentorship style", "How do you handle code quality across a team?", "Tell me about a time you introduced engineering best practices."
 
-### 3. [PROJECT_NAME] ([SKILL_DEMONSTRATED])
-**S:** [CONTEXT]
-**T:** [YOUR RESPONSIBILITY]
-**A:** [WHAT YOU DID]
-**R:** [OUTCOME]
-**Use for:** "[QUESTION_TYPE_1]", "[QUESTION_TYPE_2]"
-
-<!-- Add more STAR examples as needed. Aim for 4-6 covering different competencies. -->
+### 4. Developer Velocity Acceleration via Model Context Protocol & AI Tools (MCP, Python, Claude Code)
+**S:** Engineering teams were spending recurring hours on repetitive development tasks, technical analysis, and manual documentation.
+**T:** Identify automation opportunities and build internal tools to accelerate developer workflows.
+**A:** Designed custom AI agents using the Model Context Protocol (MCP) and Python scripts. Integrated Claude Code and Globant Enterprise AI tooling into daily coding, architectural analysis, and automated test generation workflows.
+**R:** Streamlined development overhead, cut documentation cycle times, and established internal best practices for agentic coding.
+**Use for:** "How do you leverage AI in your software development workflow?", "Tell me about an initiative you took to improve productivity."
 
 ## Common Tough Questions
 
-### "Why did you leave [previous company]?"
-> [PREPARE YOUR ANSWER - be honest, forward-looking, no negativity about former employer]
+### "Why are you looking for a new role?"
+> I've had a great journey at Globant working on impactful projects with British Airways and leading entertainment clients building AI agents on AWS Bedrock. I'm now looking for my next challenge where I can take high ownership in building cutting-edge Web UI and agentic applications within a fast-moving, globally distributed engineering team.
 
-### "You don't have [specific skill/experience]."
-> [PREPARE YOUR ANSWER - acknowledge the gap, bridge to adjacent experience, show willingness to learn]
+### "How do you balance frontend UI development with AI / agentic engineering?"
+> Modern AI systems require intuitive, accessible, and high-performance interfaces to deliver value to users. My background in React, TypeScript, and microfrontends gives me the foundation to build great user experiences, while my practical work with AWS Bedrock, MCP, and serverless architectures allows me to build and integrate the underlying intelligent agent workflows seamlessly.
 
-### "Where do you see yourself in 5 years?"
-> [PREPARE YOUR ANSWER - show ambition aligned with the role's growth path]
+### "Where do you see yourself in 3-5 years?"
+> Leading the architecture of intelligent, AI-powered web applications and agentic systems, helping engineering teams adopt best-in-class AI-assisted workflows, and mentoring developers to build resilient, accessible products.
 
-### "What's your biggest weakness?"
-> [PREPARE YOUR ANSWER - genuine weakness with concrete mitigation strategy]
+### "What is your biggest area for growth?"
+> While I have strong mastery of Web UI, TypeScript, and AWS serverless with Bedrock/Lambda, I am continuously deepening my full-stack backend depth in Python and distributed cloud architectures to have an even broader end-to-end impact.
 
 ### "Why this company specifically?"
 > Customize per company. Must reference: specific projects, company values, market position, or team structure. Never give a generic answer.
