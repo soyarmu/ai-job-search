@@ -1,0 +1,1639 @@
+{
+  "langchain_agents-engineer": {
+    "country": null,
+    "location": null,
+    "evidence": "not-found",
+    "page_evidence": "page-none"
+  },
+  "evolve_senior-fullstack-engineer": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote - US",
+    "regions": [
+      "north_america"
+    ],
+    "slug": "senior-software-engineer-full-stack-evolve-dhib4hrh",
+    "evidence": "freehire-url-match"
+  },
+  "truelogic_senior-front-end-engineer-next-js-react-real-estate-colombia": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "plexus-tech_mid-senior-frontend-ia-developer-microfrontends-copilot-remo-e82405": {
+    "country": "es",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "trading-212_senior-frontend-engineer": {
+    "country": "es",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "codebridge_react-native-developer": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "zoftify-travel-software-development_react-native-developer": {
+    "country": null,
+    "countries": [
+      "au",
+      "ca",
+      "de",
+      "gb",
+      "in",
+      "us"
+    ],
+    "location": "Australia, Canada, Germany, India, United Kingdom, United States",
+    "regions": [
+      "apac",
+      "eu",
+      "north_america",
+      "uk"
+    ],
+    "slug": "react-native-developer-zoftify-travel-software-development-sg5ckryh",
+    "evidence": "freehire-url-match"
+  },
+  "stormotion_react-native-developer": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "par-soft_react-native-mobile-developer-expo-typescript-ios-android": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "devbrother_react-native-developer-trading-infrastructure": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "phoenixgame_react-frontend-developer-igaming": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "quik-hire-staffing_react-native-developer-remote": {
+    "country": "fr",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "netguru_react-native-developer-freelance": {
+    "country": "pl",
+    "countries": [
+      "pl"
+    ],
+    "location": "Poland",
+    "regions": [
+      "eu"
+    ],
+    "slug": "react-native-developer-freelance-netguru-quueqq4t",
+    "evidence": "freehire-url-match"
+  },
+  "talan_react-front-end-developer-4-months-contract": {
+    "country": null,
+    "countries": [
+      "es",
+      "md"
+    ],
+    "location": "Málaga, AN, es",
+    "regions": [
+      "cis",
+      "eu"
+    ],
+    "slug": "react-front-end-developer-4-months-contract-talan-ys77wgck",
+    "evidence": "freehire-url-match"
+  },
+  "scale3c_react-developer": {
+    "country": "lt",
+    "countries": [
+      "lt"
+    ],
+    "location": "Vilnius, Vilniaus, Lithuania",
+    "regions": [
+      "eu"
+    ],
+    "slug": "react-developer-scale3c-xbxy3ugh",
+    "evidence": "freehire-url-match"
+  },
+  "welvaart_react-developer": {
+    "country": "pt",
+    "countries": [
+      "pt"
+    ],
+    "location": "Lisbon, Portugal",
+    "regions": [
+      "eu"
+    ],
+    "slug": "react-developer-welvaart-46tix7xh",
+    "evidence": "freehire-url-match"
+  },
+  "aid-tech_react-native-developer": {
+    "country": "ie",
+    "countries": [
+      "ie"
+    ],
+    "location": "",
+    "regions": [
+      "eu"
+    ],
+    "slug": "react-native-developer-aid-tech-hm6ucnwi",
+    "evidence": "freehire-url-match"
+  },
+  "code-pepper_react-native-developer": {
+    "country": "pl",
+    "countries": [
+      "pl"
+    ],
+    "location": "Praca zdalna",
+    "regions": [
+      "eu"
+    ],
+    "slug": "react-native-developer-code-pepper-zsqu75a5",
+    "evidence": "freehire-url-match"
+  },
+  "itconsulting-srl_react-developer": {
+    "country": "it",
+    "countries": [
+      "it"
+    ],
+    "location": ",",
+    "regions": [
+      "eu"
+    ],
+    "slug": "react-developer-itconsulting-srl-xnkk23gg",
+    "evidence": "freehire-url-match"
+  },
+  "elements_react-native-developer-with-ios-background": {
+    "country": "nl",
+    "countries": [
+      "nl"
+    ],
+    "location": "Amsterdam, North Holland, Netherlands",
+    "regions": [
+      "eu"
+    ],
+    "slug": "react-native-developer-with-ios-background-elements-gip7wedb",
+    "evidence": "freehire-url-match"
+  },
+  "fliff_react-native-engineer": {
+    "country": "bg",
+    "countries": [
+      "bg"
+    ],
+    "location": "Sofia",
+    "regions": [
+      "eu"
+    ],
+    "slug": "react-native-engineer-fliff-a4d4tvce",
+    "evidence": "freehire-url-match"
+  },
+  "madfish_react-developer": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "lynx-solutions_react-developer": {
+    "country": "ro",
+    "countries": [
+      "ro"
+    ],
+    "location": "Cluj-Napoca, CJ, ro",
+    "regions": [
+      "eu"
+    ],
+    "slug": "react-developer-lynx-solutions-wuowujv4",
+    "evidence": "freehire-url-match"
+  },
+  "deecide_react-developer": {
+    "country": "be",
+    "countries": [
+      "be"
+    ],
+    "location": "Waterloo, Belgium",
+    "regions": [
+      "eu"
+    ],
+    "slug": "react-developer-deecide-4oakqx6e",
+    "evidence": "freehire-url-match"
+  },
+  "bvp-software_reactjs-developer": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "aida-recruitment_senior-react-developer": {
+    "country": "lt",
+    "countries": [
+      "lt"
+    ],
+    "location": "Vilnius, Vilnius City Municipality, Lithuania",
+    "regions": [
+      "eu"
+    ],
+    "slug": "senior-react-developer-aida-recruitment-gs4ipfr3",
+    "evidence": "freehire-url-match"
+  },
+  "act-digital_node-react-developer": {
+    "country": "pt",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "dataart_fullstack-react-node-engineer": {
+    "country": null,
+    "countries": [
+      "pl",
+      "ua"
+    ],
+    "location": "Dnipro, Ukraine; Kharkiv, Ukraine; Krakow, Poland; Kyiv, Ukraine; Lodz, Poland; Lublin, Poland; Lviv, Ukraine; Odesa, Ukraine; Poland; Warsaw, Poland; Wroclaw, Poland",
+    "regions": [
+      "eu"
+    ],
+    "slug": "fullstack-react-node-engineer-dataart-xqc2phny",
+    "evidence": "freehire-url-match"
+  },
+  "valtech_fr-senior-react-front-end-developer": {
+    "country": "fr",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "tango_senior-web-developer": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "astek-vietnam_senior-frontend-developer": {
+    "country": "vn",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "capgemini_senior-frontend-developer-payments-platform": {
+    "country": "hu",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "makai-labs_senior-next-js-developer": {
+    "country": "pe",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "okx_staff-senior-staff-frontend-engineer-customer-genius-boss": {
+    "country": "sg",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "okx_staff-senior-staff-frontend-engineer-growth": {
+    "country": "sg",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "rakuten_senior-frontend-engineer-bss-platform-bss-development-depart-b94d03": {
+    "country": "jp",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "swisscom-devops-center-riga_senior-frontend-developer-react-typescript": {
+    "country": "lv",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "cayuse_ai-solution-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-solution-engineer-cayuse-aezc3lvn",
+    "evidence": "freehire-url-match"
+  },
+  "bjakcareer_ai-security-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Global",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-security-engineer-bjakcareer-3bfbsdh2",
+    "evidence": "freehire-url-match"
+  },
+  "raft-digital-solutions_ai-security-researcher": {
+    "country": "ru",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "iteamdevelopment_ai-motion-designer-ai-video-creator": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "top-selection_ai": {
+    "country": "ru",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "raft-digital-solutions_ai": {
+    "country": "ru",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "xai_ai-tutor-software-engineering": {
+    "country": null,
+    "countries": [],
+    "location": "Remote International",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-tutor-software-engineering-xai-7oak6cyp",
+    "evidence": "freehire-url-match"
+  },
+  "deltafunc_ai-automation-engineer": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "job-application-for-product-manager-proc-52a9b1_ai-software-engineer": {
+    "country": "gb",
+    "countries": [
+      "gb"
+    ],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-software-engineer-job-application-for-product-manager-procure-to-pay-at-zone-co-2la3mnkq",
+    "evidence": "page-jsonld"
+  },
+  "the-agency-fund_ai-ml-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Global",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-ml-engineer-the-agency-fund-hlhjdop4",
+    "evidence": "freehire-url-match"
+  },
+  "invisible-technologies-ai_ai-qa-trainer-llm-evaluation-freelance-project": {
+    "country": null,
+    "countries": [],
+    "location": "World Wide - Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-qa-trainer-llm-evaluation-freelance-project-invisible-technologies-ai-ozmnnhhe",
+    "evidence": "freehire-url-match"
+  },
+  "spacexai_ai-tutor-software-engineering": {
+    "country": null,
+    "countries": [],
+    "location": "Remote International",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-tutor-software-engineering-xai-7oak6cyp",
+    "evidence": "freehire-url-match"
+  },
+  "niuro_ai-back-end-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-back-end-engineer-niuro-zjuij7tk",
+    "evidence": "freehire-url-match"
+  },
+  "prai_ai-project-manager": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "recraft_ai-designer": {
+    "country": null,
+    "countries": [
+      "gb",
+      "us"
+    ],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-designer-recraft-sc5jezjn",
+    "evidence": "freehire-url-match"
+  },
+  "expertshub-ai_ai-ml-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Worldwide",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-ml-engineer-expertshub-ai-ia5byqzf",
+    "evidence": "freehire-url-match"
+  },
+  "expertshub-ai_ai-ml-lead-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Worldwide",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-ml-lead-engineer-expertshub-ai-pblgtbqn",
+    "evidence": "freehire-url-match"
+  },
+  "expertshub-ai_ai-architect": {
+    "country": null,
+    "countries": [],
+    "location": "Worldwide",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-architect-expertshub-ai-7rd2tuou",
+    "evidence": "freehire-url-match"
+  },
+  "expertshub-ai_ai-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Worldwide",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-engineer-expertshub-ai-y6aajffw",
+    "evidence": "freehire-url-match"
+  },
+  "rajant_ai-software-engineer": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote Worker - N/A",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-software-engineer-rajant-vaouucso",
+    "evidence": "freehire-url-match"
+  },
+  "pomeroy_ai-developer": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Anywhere - US (Remote/Work from Home), Anywhere, United States",
+    "regions": [
+      "global",
+      "north_america"
+    ],
+    "slug": "ai-developer-pomeroy-wthjcjo6",
+    "evidence": "freehire-url-match"
+  },
+  "micro1_ai-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Remote (Work From Home)",
+    "regions": [
+      "global"
+    ],
+    "slug": "ai-engineer-micro1-lltdn6co",
+    "evidence": "freehire-url-match"
+  },
+  "lyft_machine-learning-engineer-lyft-business-ads": {
+    "country": "ca",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "futurice_senior-ai-engineer": {
+    "country": "fi",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "cimri_machine-learning-engineer": {
+    "country": "tr",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "karrot_software-engineer-machine-learning": {
+    "country": "kr",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "trust-in-soda_ai-engineer": {
+    "country": "es",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "delphie-consulting-services_generative-ai-engineer": {
+    "country": "in",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "litmus7_senior-engineer-ai": {
+    "country": "in",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "litmus7_sr-engineer-ai-ml": {
+    "country": "in",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "jobbol_engenheiro-de-inteligencia-artificial": {
+    "country": "br",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "prima_software-machine-learning-engineer": {
+    "country": "gb",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "ermes-ai-browser-security_senior-front-end-developer": {
+    "country": "it",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "cognizant_senior-front-end-engineer": {
+    "country": "lt",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "capgemini_senior-angular-developer": {
+    "country": "us",
+    "location": null,
+    "evidence": "page-jsonld",
+    "countries": [
+      "us"
+    ]
+  },
+  "computer-futures_senior-frontend-entwickler-angular-gewichtet-w-m-d-koln": {
+    "country": "de",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "citi_senior-gui-developer-equities-technology": {
+    "country": "ca",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "shopee_ai-agent-algorithm-engineer": {
+    "country": "sg",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "mnp_ai-engineer-innovation": {
+    "country": "ca",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "pocketpills_pocketpills-ai-engineer-llm-amp-agentic-ai": {
+    "country": "in",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "tata-consultancy-services_gen-ai-developer": {
+    "country": "in",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "azurity-pharmaceuticals_agentic-ai-developer": {
+    "country": "in",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "columbus_senior-ai-engineer-centre-of-excellence": {
+    "country": "gb",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "discovered-mena_senior-ai-engineer": {
+    "country": "ae",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "tata-consultancy-services_genai-engineer": {
+    "country": "us",
+    "location": null,
+    "evidence": "page-jsonld",
+    "countries": [
+      "us"
+    ]
+  },
+  "shopee_ai-engineer-llm-algorithm-engineer-agentic-commerce": {
+    "country": "sg",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "mccabe-barton_generative-ai-engineer": {
+    "country": "gb",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "confidential_desarrollador-a-frontend-senior-react-next-js-cali": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "lorian-analytics_desarrollador-a-frontend-semi-senior-react-typescript-remoto": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "addi_frontend-engineer-ic2": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "kraken_senior-software-engineer-frontend-consumer": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "skydropx-latam_software-engineer-react-native-react-next-js": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "newtonx_senior-frontend-react-engineer": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "digitive_sr-full-stack-engineer-frontend": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "sporty-group_frontend-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Global - Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-engineer-sporty-group-jicdehfv",
+    "evidence": "freehire-url-match"
+  },
+  "synq_frontend-software-engineer": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "San Francisco",
+    "regions": [
+      "north_america"
+    ],
+    "slug": "frontend-software-engineer-synquote-h7a24uja",
+    "evidence": "freehire-url-match"
+  },
+  "naturtreu_frontend-entwickler-in-cro-experimentation-m-w-d-remote": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-entwickler-in-cro-experimentation-m-w-d-remote-naturtreu-4i2ggei4",
+    "evidence": "freehire-url-match"
+  },
+  "micro1_frontend-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "software-developer-micro1-4t25a2nx",
+    "evidence": "freehire-url-match"
+  },
+  "mercor_frontend-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Fully Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-engineer-mercor-wwnogbck",
+    "evidence": "freehire-url-match"
+  },
+  "tether_frontend-software-engineer-100-remote": {
+    "country": null,
+    "countries": [],
+    "location": "Remote job",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-software-engineer-100-remote-tether-jcauievq",
+    "evidence": "freehire-url-match"
+  },
+  "black-financial-consult_frontend-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-engineer-black-financial-consult-af6w2vjt",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  },
+  "softgic_frontend-engineer-sme-studio": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-engineer-sme-studio-softgic-q63vbwop",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  },
+  "appmysite_frontend-developer-html": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-developer-html-appmysite-y6fdzdx7",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  },
+  "mercor_frontend-engineer-talent-network": {
+    "country": null,
+    "countries": [],
+    "location": "Worldwide",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-engineer-talent-network-mercor-w47oybbj",
+    "evidence": "freehire-url-match"
+  },
+  "micro1_frontend-software-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Worldwide",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-software-engineer-micro1-xhmio3gv",
+    "evidence": "freehire-url-match"
+  },
+  "aoro-ai_frontend-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-engineer-aoro-ai-572laxhl",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  },
+  "zipnom-technologies_frontend-engineer-intern": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-engineer-intern-zipnom-technologies-pma2bjqr",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  },
+  "dropbox_frontend-product-software-engineer-design-systems": {
+    "country": null,
+    "countries": [],
+    "location": "Anywhere in the World",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-product-software-engineer-design-systems-dropbox-ot5n73rq",
+    "evidence": "freehire-url-match"
+  },
+  "yarrl-sa_frontend-developer-vue": {
+    "country": "pl",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "doppler_frontend-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Global",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-engineer-doppler-fvnr2cay",
+    "evidence": "freehire-url-match"
+  },
+  "campaignswell_frontend-developer": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-developer-campaignswell-faau6xtn",
+    "evidence": "freehire-url-match"
+  },
+  "sweedpos-com_frontend-engineer-react": {
+    "country": null,
+    "location": null,
+    "evidence": "not-found",
+    "page_evidence": "page-none"
+  },
+  "buildesk_frontend-developer": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-developer-buildesk-ovucshs4",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  },
+  "xceed_frontend-staff-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-staff-engineer-xceed-p3jf7tjz",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  },
+  "quinncia-inc_frontend-developer": {
+    "country": null,
+    "countries": [],
+    "location": "Worldwide",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-developer-quinncia-inc-t5x4wi3q",
+    "evidence": "freehire-url-match"
+  },
+  "ritual_frontend-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "frontend-engineer-ritual-2rabfkk5",
+    "evidence": "freehire-url-match"
+  },
+  "it-hunter_frontend-head-of-frontend": {
+    "country": "ru",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "top-selection_fullstack-24": {
+    "country": "ru",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "serenity_fullstack-developer": {
+    "country": "ru",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "naran_fullstack-developer": {
+    "country": "ru",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "plan-a-technologies_fullstack-developer": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "fullstack-developer-plan-a-technologies-ycpxe56b",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-http-404"
+  },
+  "micro1_fullstack-developer": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "fullstack-developer-micro1-mgeyjgjc",
+    "evidence": "freehire-url-match"
+  },
+  "codest-ltd-company-no-12590542-vat-numbe-e3a19f_fullstack-engineer-java-kotlin-javascript": {
+    "country": "pl",
+    "countries": [
+      "pl"
+    ],
+    "location": "Remote job",
+    "regions": [
+      "global"
+    ],
+    "slug": "fullstack-engineer-java-kotlin-javascript-codest-ltd-company-no-12590542-vat-number-gb363431020-ahwvrinf",
+    "evidence": "freehire-url-match"
+  },
+  "busigence-technologies_fullstack-web-developer": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "",
+    "regions": [
+      "global",
+      "north_america"
+    ],
+    "slug": "fullstack-web-developer-busigence-technologies-j46kugyq",
+    "evidence": "freehire-url-match"
+  },
+  "softgic_fullstack-developer-sol-1463": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "fullstack-developer-sol-1463-softgic-s3x3o6eo",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  },
+  "talentuch_fullstack-developer-node-typescript-react-native": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "jetbrains_fullstack-machine-learning-developer-junie": {
+    "country": "gb",
+    "countries": [
+      "gb"
+    ],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "fullstack-machine-learning-developer-junie-jetbrains-my6kyoo5",
+    "evidence": "page-text"
+  },
+  "sakura-games_fullstack-developer-node-js-typescript-and-react-next-js": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "fullstack-developer-node-js-typescript-and-react-next-js-sakura-games-s3xwui77",
+    "evidence": "freehire-url-match"
+  },
+  "tokensaver_fullstack-developer-ai-native-for-b2b-saas": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "gomining_fullstack-engineer": {
+    "country": "lv",
+    "countries": [
+      "lv"
+    ],
+    "location": "Latvia",
+    "regions": [
+      "eu",
+      "global"
+    ],
+    "slug": "fullstack-engineer-gomining-mtrmwtrq",
+    "evidence": "freehire-url-match"
+  },
+  "siege-media_fullstack-cms-developer-part-time": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "fullstack-cms-developer-part-time-siege-media-57ym2wjd",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  },
+  "abalone_fullstack-developer-typescript": {
+    "country": "ru",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "atticus-com_fullstack-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "fullstack-engineer-atticus-com-lsgo3ou6",
+    "evidence": "freehire-url-match"
+  },
+  "employ-city_senior-fullstack-qa-java-go-ts": {
+    "country": "ru",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "south-geeks_senior-fullstack-engineer-python-js": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "senior-fullstack-engineer-python-js-south-geeks-jyel224l",
+    "evidence": "freehire-url-match"
+  },
+  "softgic_senior-fullstack-software-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "senior-fullstack-software-engineer-softgic-qfurovk2",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  },
+  "spassu_desenvolvedor-fullstack-java-spring-angular-exclusiva-pcd": {
+    "country": "br",
+    "countries": [
+      "br"
+    ],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "desenvolvedor-fullstack-java-spring-angular-exclusiva-pcd-spassu-sdlrjasg",
+    "evidence": "freehire-url-match"
+  },
+  "qohash_bilingual-fullstack-developer-node-js-react-js-docker": {
+    "country": "ca",
+    "countries": [
+      "ca"
+    ],
+    "location": "Remote",
+    "regions": [
+      "global"
+    ],
+    "slug": "bilingual-fullstack-developer-node-js-react-js-docker-qohash-4vh5hrah",
+    "evidence": "freehire-url-match"
+  },
+  "gomining_senior-fullstack-engineer-backend-focused": {
+    "country": "ru",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "playversa_senior-fullstack-game-developer": {
+    "country": "ua",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "fundraise-up_senior-fullstack-mobile-engineer": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "",
+    "regions": [
+      "global"
+    ],
+    "slug": "senior-fullstack-mobile-engineer-fundraise-up-jqsepagg",
+    "evidence": "freehire-url-match"
+  },
+  "higlobe_react-native-developer": {
+    "country": "co",
+    "countries": [
+      "co"
+    ],
+    "location": "Bogota, Distrito Capital de Bogotá, Colombia",
+    "regions": [
+      "latam"
+    ],
+    "slug": "react-native-developer-higlobe-5emstuq2",
+    "evidence": "freehire-url-match"
+  },
+  "valor-software_react-native-developer-latam": {
+    "country": "br",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "flux-it_react-native-developer-ssr": {
+    "country": "ar",
+    "countries": [
+      "ar"
+    ],
+    "location": "Argentina",
+    "regions": [
+      "latam"
+    ],
+    "slug": "react-native-developer-ssr-flux-it-rrtqwxw6",
+    "evidence": "freehire-url-match"
+  },
+  "flux-it_react-developer-ssr": {
+    "country": "ar",
+    "countries": [
+      "ar"
+    ],
+    "location": "Argentina",
+    "regions": [
+      "latam"
+    ],
+    "slug": "react-developer-ssr-flux-it-3bvvu44v",
+    "evidence": "freehire-url-match"
+  },
+  "flux-it_react-developer-jr": {
+    "country": "ar",
+    "countries": [
+      "ar"
+    ],
+    "location": "Argentina",
+    "regions": [
+      "latam"
+    ],
+    "slug": "react-developer-jr-flux-it-vssrhzmo",
+    "evidence": "freehire-url-match"
+  },
+  "indi-staffing-services_react-native-developer-remote": {
+    "country": "br",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "applaudo_react-native-developer": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "konrad_react-native-developer": {
+    "country": "cr",
+    "countries": [
+      "cr"
+    ],
+    "location": "Costa Rica",
+    "regions": [
+      "latam"
+    ],
+    "slug": "react-native-developer-konrad-sqzehjry",
+    "evidence": "freehire-url-match"
+  },
+  "bluelight-consulting_react-engineer-remote-latin-america": {
+    "country": null,
+    "countries": [
+      "ar",
+      "bo",
+      "br",
+      "bz",
+      "cl",
+      "co",
+      "cr",
+      "ec",
+      "gt",
+      "hn",
+      "mx",
+      "ni",
+      "pa",
+      "pe",
+      "py",
+      "sr",
+      "sv",
+      "us",
+      "uy"
+    ],
+    "location": "Belmopan, Belize",
+    "regions": [
+      "central_asia",
+      "latam",
+      "north_america",
+      "us"
+    ],
+    "slug": "react-engineer-remote-latin-america-bluelight-consulting-dm62q4fv",
+    "evidence": "freehire-url-match"
+  },
+  "zipdev_senior-react-native-developer": {
+    "country": "br",
+    "countries": [
+      "br"
+    ],
+    "location": "Brazil",
+    "regions": [
+      "latam"
+    ],
+    "slug": "senior-react-native-developer-zipdev-akx3huau",
+    "evidence": "freehire-url-match"
+  },
+  "giga-it_software-developer-react-js-senior": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "enumerate_php-react-software-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Latin America - Remote",
+    "regions": [
+      "latam"
+    ],
+    "slug": "php-react-software-engineer-enumerate-iabo6z3d",
+    "evidence": "freehire-url-match"
+  },
+  "a5-talent-finders_python-react-fullstack-engineer-latam": {
+    "country": "ar",
+    "countries": [
+      "ar"
+    ],
+    "location": "Buenos Aires, Argentina",
+    "regions": [
+      "latam"
+    ],
+    "slug": "python-react-fullstack-engineer-latam-a5-talent-finders-4vwo3pca",
+    "evidence": "freehire-url-match"
+  },
+  "cashme_desenvolvedor-react-frontend-senior-100-remoto": {
+    "country": "br",
+    "countries": [
+      "br"
+    ],
+    "location": "BR",
+    "regions": [
+      "latam"
+    ],
+    "slug": "desenvolvedor-react-frontend-senior-100-remoto-cashme-u7b7iryv",
+    "evidence": "freehire-url-match"
+  },
+  "arionkoder_senior-react-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "LATAM",
+    "regions": [
+      "latam"
+    ],
+    "slug": "senior-react-engineer-arionkoder-demu25my",
+    "evidence": "freehire-url-match"
+  },
+  "blockchain-com_senior-react-native-engineer": {
+    "country": "ar",
+    "countries": [
+      "ar"
+    ],
+    "location": "Buenos Aires",
+    "regions": [
+      "latam"
+    ],
+    "slug": "senior-react-native-engineer-blockchain-com-hnotcoib",
+    "evidence": "freehire-url-match"
+  },
+  "bluelight-consulting-llc_remote-react-native-developer-build-impactful-mobile-apps": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "coderoad_senior-react-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Latin America",
+    "regions": [
+      "latam"
+    ],
+    "slug": "senior-react-engineer-coderoad-wvt2fr6g",
+    "evidence": "freehire-url-match"
+  },
+  "intellias_middle-react-developer": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "intellias_senior-react-frontend-developer-100-remote": {
+    "country": "co",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "proxify_senior-react-native-developer": {
+    "country": "br",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "lemon-io_senior-react-full-stack-developer": {
+    "country": null,
+    "countries": [],
+    "location": "Europe, North America, Latin America, APAC",
+    "regions": [
+      "apac",
+      "eu",
+      "latam",
+      "north_america"
+    ],
+    "slug": "senior-react-full-stack-developer-lemon-io-mzhxqdpy",
+    "evidence": "freehire-url-match"
+  },
+  "lemon-io_senior-react-ruby-developer": {
+    "country": null,
+    "countries": [],
+    "location": "Europe, North America, Latin America, APAC",
+    "regions": [
+      "apac",
+      "eu",
+      "latam",
+      "north_america"
+    ],
+    "slug": "senior-react-ruby-developer-lemon-io-tirc6kdf",
+    "evidence": "freehire-url-match"
+  },
+  "conecta-ads_desenvolvedor-a-full-stack": {
+    "country": "br",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "selection-4-0-sa_full-stack-developer-laravel-vue-js": {
+    "country": "it",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "jobbol_desenvolvedor-full-stack-net-angular": {
+    "country": "br",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "lumion_junior-full-stack-software-engineer": {
+    "country": "us",
+    "location": null,
+    "evidence": "page-jsonld",
+    "countries": [
+      "us"
+    ]
+  },
+  "sermaluc_desarrollador-fullstack-angular-node-nestjs": {
+    "country": "cl",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "valeo_senior-full-stack-developer-gisacc": {
+    "country": "eg",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "field-nation_senior-software-engineer-full-stack": {
+    "country": "bd",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "scribe_full-stack-engineer-enterprise-scale": {
+    "country": "rs",
+    "location": null,
+    "evidence": "url-domain"
+  },
+  "oneimaging_full-stack-software-engineer-typescript-react": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "us"
+    ],
+    "slug": "full-stack-software-engineer-typescript-react-oneimaging-7qiz5q4r",
+    "evidence": "freehire-url-match"
+  },
+  "confluent_senior-software-engineer": {
+    "country": null,
+    "countries": [
+      "ca",
+      "us"
+    ],
+    "location": "*Job Posting Only: USA1",
+    "regions": [
+      "north_america",
+      "us"
+    ],
+    "slug": "senior-software-engineer-confluent-xhdfii2m",
+    "evidence": "freehire-url-match"
+  },
+  "astra_senior-fullstack-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "Remote - US Only",
+    "regions": [
+      "us"
+    ],
+    "slug": "senior-fullstack-engineer-astra-xf5jzsc5",
+    "evidence": "freehire-url-match"
+  },
+  "symbotic_technical-control-engineer": {
+    "country": null,
+    "countries": [],
+    "location": "USA Remote & Travel",
+    "regions": [
+      "us"
+    ],
+    "slug": "technical-control-engineer-symbotic-nvu2xgdl",
+    "evidence": "freehire-url-match"
+  },
+  "reacher_partnerships-lead": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "us"
+    ],
+    "slug": "partnerships-lead-reacher-rlpgjva4",
+    "evidence": "freehire-url-match"
+  },
+  "reacher_founding-account-executive-us": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote",
+    "regions": [
+      "north_america",
+      "us"
+    ],
+    "slug": "founding-account-executive-us-reacher-bh5ama2s",
+    "evidence": "freehire-url-match"
+  },
+  "runway_executive-assistant-senior-executive-assistant-to-executive-d5fa8d": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote",
+    "regions": [
+      "north_america",
+      "us"
+    ],
+    "slug": "executive-assistant-senior-executive-assistant-to-executive-leadership-team-runway-wzqezbh6",
+    "evidence": "freehire-url-match"
+  },
+  "stripe_aeo-and-geo-marketing-manager": {
+    "country": null,
+    "countries": [],
+    "location": "Remote in the US",
+    "regions": [
+      "us"
+    ],
+    "slug": "aeo-and-geo-marketing-manager-stripe-3qqbcip3",
+    "evidence": "freehire-url-match"
+  },
+  "cursor_field-engineer": {
+    "country": null,
+    "countries": [
+      "au",
+      "in",
+      "kr",
+      "sg"
+    ],
+    "location": "Remote",
+    "regions": [
+      "apac",
+      "us"
+    ],
+    "slug": "field-engineer-cursor-fmuuunfn",
+    "evidence": "freehire-url-match"
+  },
+  "bvnk_sales-director-bilingual-fintech-psp": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote",
+    "regions": [
+      "north_america",
+      "us"
+    ],
+    "slug": "sales-director-bilingual-fintech-psp-bvnk-dvdtxg7c",
+    "evidence": "freehire-url-match"
+  },
+  "runway_enterprise-sr-enterprise-account-executive": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote",
+    "regions": [
+      "north_america",
+      "us"
+    ],
+    "slug": "enterprise-sr-enterprise-account-executive-runway-6tb5odzq",
+    "evidence": "freehire-url-match"
+  },
+  "voya-financial_cloud-security-engineer": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "CT-Windsor, One Orange Way",
+    "regions": [
+      "us"
+    ],
+    "slug": "cloud-security-engineer-voya-financial-biaz2dsq",
+    "evidence": "freehire-url-match"
+  },
+  "force-therapeutics_client-success-manager": {
+    "country": null,
+    "countries": [],
+    "location": "Remote - US West",
+    "regions": [
+      "us"
+    ],
+    "slug": "client-success-manager-force-therapeutics-xdkmh3zd",
+    "evidence": "freehire-url-match"
+  },
+  "owensminor_senior-project-manager": {
+    "country": null,
+    "countries": [],
+    "location": "Remote - Georgia",
+    "regions": [
+      "us"
+    ],
+    "slug": "senior-project-manager-owensminor-wnpmfjcl",
+    "evidence": "freehire-url-match"
+  },
+  "humansignal_content-creator-flexible-gig": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "us"
+    ],
+    "slug": "content-creator-flexible-gig-humansignal-7lpe3ehh",
+    "evidence": "freehire-url-match"
+  },
+  "runway_senior-manager-director-product-developer-platform": {
+    "country": null,
+    "countries": [],
+    "location": "Remote",
+    "regions": [
+      "us"
+    ],
+    "slug": "senior-manager-director-product-developer-platform-runway-jwu2ztq6",
+    "evidence": "freehire-url-match"
+  },
+  "runway_manager-director-sales-development": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote",
+    "regions": [
+      "north_america",
+      "us"
+    ],
+    "slug": "manager-director-sales-development-runway-65dt66js",
+    "evidence": "freehire-url-match"
+  },
+  "classdojo_school-partnerships-specialist-contractor-field-based": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote",
+    "regions": [
+      "us"
+    ],
+    "slug": "school-partnerships-specialist-contractor-field-based-classdojo-gsxvex3h",
+    "evidence": "freehire-url-match"
+  },
+  "runway_sr-staff-product-manager-ml-research": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote",
+    "regions": [
+      "north_america",
+      "us"
+    ],
+    "slug": "sr-staff-product-manager-ml-research-runway-mmvq2xaq",
+    "evidence": "freehire-url-match"
+  },
+  "runway_creative-support-specialist-enterprise": {
+    "country": "us",
+    "countries": [
+      "us"
+    ],
+    "location": "Remote",
+    "regions": [
+      "americas",
+      "north_america",
+      "us"
+    ],
+    "slug": "creative-support-specialist-enterprise-runway-vzbmbuwa",
+    "evidence": "freehire-url-match"
+  },
+  "cwan_new-graduate-cwan-position": {
+    "country": null,
+    "countries": [],
+    "location": "",
+    "regions": [
+      "us"
+    ],
+    "slug": "new-graduate-cwan-position-cwan-oal2h62y",
+    "evidence": "freehire-url-match",
+    "page_evidence": "page-none"
+  }
+}

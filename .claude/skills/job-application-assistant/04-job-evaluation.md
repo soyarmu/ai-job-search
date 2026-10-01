@@ -60,9 +60,9 @@ How well do the required/preferred skills align with the candidate's capabilitie
 | 40-59 | Partial match, significant upskilling needed |
 | 0-39 | Fundamental mismatch |
 
-**Strong match areas:** [YOUR_PRIMARY_SKILLS]
-**Moderate match areas:** [YOUR_SECONDARY_SKILLS]
-**Weak match areas:** [SKILLS_YOU_LACK]
+**Strong match areas:** React, Next.js, TypeScript, JavaScript (ES6+), AWS Bedrock, AI Agents, Agentic Workflows, Model Context Protocol (MCP), Python, Serverless (AWS Lambda, S3, API Gateway), HTML5/CSS3, Web UI Development
+**Moderate match areas:** Node.js, Express, REST APIs, Mobile UI (iOS/Android), Microfrontends, Redux, Vitest, React Testing Library, Docker, Azure DevOps/Pipelines, GitFlow, Adobe Analytics
+**Weak match areas:** Java/C#/.NET enterprise backends, C/C++, Rust, low-level systems programming, large-scale data engineering (Hadoop, Spark)
 
 ### 2. Experience Match (0-100)
 Does work history align with what they're looking for? Match on the function and nature of the work performed, not the literal job title - a "Data Consultant" and a "Data Scientist" role can be functionally identical.
@@ -74,9 +74,9 @@ Does work history align with what they're looking for? Match on the function and
 | 40-59 | Adjacent experience, would need to make the case |
 | 0-39 | Unrelated experience |
 
-**Strong:** [YOUR_DIRECT_EXPERIENCE_DOMAINS]
-**Moderate:** [YOUR_ADJACENT_EXPERIENCE]
-**Entry-level:** [ROLES_WITH_LIMITED_EXPERIENCE]
+**Strong:** Web UI Developer, Senior Frontend Developer, Agentic Engineer, AI Applications Engineer, Frontend Tech Lead, Fullstack Developer (React/Next.js + Node/Python/Serverless)
+**Moderate:** Pure Backend Developer (Python/Node), DevOps Engineer, Native Mobile Developer
+**Entry-level:** Data Platform / ML Infrastructure Engineer, Embedded Systems
 
 ### 3. Behavioral/Culture Fit (0-100)
 Does the role and company culture match the behavioral profile?
@@ -91,9 +91,9 @@ Does the role and company culture match the behavioral profile?
 **Red flags to research:** Department disorganization, work dominated by maintenance over development, poor chemistry with leadership, culture mismatches. Check reviews, media coverage, LinkedIn connections, and network contacts for insider perspective.
 
 ### 4. Location & Logistics (Pass/Fail + Notes)
-- Within commute range: PASS
-- Remote with occasional office: PASS
-- Requires relocation: FAIL (deal-breaker)
+- Remote Worldwide / LATAM / US / Europe: PASS
+- Hybrid/On-site in Bogotá/Chía (Colombia): PASS
+- Requires mandatory relocation outside Colombia without remote option: FAIL (deal-breaker)
 - Frequent international travel: FLAG (discuss with user)
 
 ### 5. Career Alignment & Motivation (0-100)
@@ -107,19 +107,19 @@ Does this role advance career goals and contain tasks that energize?
 | 0-39 | Dead end or backwards step |
 
 **Career goals:**
-- [YOUR_CAREER_GOAL_1]
-- [YOUR_CAREER_GOAL_2]
-- [YOUR_CAREER_GOAL_3]
+- Build high-impact enterprise Web UI and AI agentic solutions (Bedrock, MCP, Claude Code).
+- Deepen full-stack agentic engineering with modern frameworks and cloud serverless architectures.
+- Work with high-performing global engineering teams offering competitive remote compensation ($3,500+ USD / 11,000,000+ COP).
 
 **Motivation filter:** Evaluate not just whether you *can* do the tasks, but whether the tasks will *energize* you. Consider:
-- Tasks that energize: [YOUR_ENERGIZING_TASKS]
-- Tasks that drain: [YOUR_DRAINING_TASKS]
+- Tasks that energize: Architecting clean UI components, building autonomous AI agents, designing MCP integrations, automating dev workflows, collaborative problem-solving.
+- Tasks that drain: Legacy maintenance without modernization roadmap, rigid micromanagement, pure manual repetitive tasks.
 - Non-task factors: leadership style, department culture, company values, degree of autonomy
 
 **Life situation alignment:** Consider personal constraints:
-- **Security**: [YOUR_FINANCIAL_SITUATION_CONTEXT]
-- **Flexibility**: [YOUR_SCHEDULE_CONSTRAINTS]
-- **Professional development**: [YOUR_GROWTH_PRIORITIES]
+- **Security**: Minimum baseline $3,500 USD / month or 11,000,000 COP.
+- **Flexibility**: Remote worldwide preference; based in Chía/Bogotá, Colombia.
+- **Professional development**: Continuous learning in AI agents, TypeScript, modern cloud architecture.
 
 ### 6. Salary Benchmark (Optional)
 

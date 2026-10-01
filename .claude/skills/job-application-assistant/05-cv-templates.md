@@ -59,7 +59,7 @@ Expected output: `Output written on main_<company>_<role>.pdf (2 pages, ...)`. A
     linkcolor=blue,
     filecolor=magenta,
     urlcolor=blue,
-    pdftitle={[YOUR_NAME] - CV},
+    pdftitle={Armando Bermudez - CV},
     % Keep pdfpagemode=UseNone: this block runs after moderncv's own
     % \AtEndPreamble (moderncv.cls sets pdfpagemode there), so a FullScreen
     % value here would win and open every CV in fullscreen presentation mode.
@@ -69,13 +69,11 @@ Expected output: `Output written on main_<company>_<role>.pdf (2 pages, ...)`. A
 \usepackage{import}
 
 % Personal data
-\name{[FIRST_NAME]}{[LAST_NAME]}
-% If you have no address to list, DELETE this whole line. \address{}{}{} fails
-% with "There's no line here to end" on every moderncv version.
-\address{[YOUR_ADDRESS]}{}{}
-\phone[mobile]{[YOUR_PHONE]}
-\email{[YOUR_EMAIL]}
-\extrainfo{\href{[YOUR_LINKEDIN_URL]}{LinkedIn}, \href{[YOUR_GITHUB_URL]}{GitHub}}
+\name{Armando}{Bermudez}
+\address{Ch\'{\i}a, Bogot\'a, Colombia}{}{}
+\phone[mobile]{+57 317 213 0907}
+\email{armucode@gmail.com}
+\extrainfo{\href{https://www.linkedin.com/in/soyarmu/}{LinkedIn}, \href{https://github.com/soyarmu}{GitHub}}
 
 \begin{document}
 \makecvtitle
@@ -136,12 +134,14 @@ When the role sits outside your home domain, **lead with the domain-transfer arg
 
 **Create 2-3 profile statement templates for your main role types:**
 
-<!-- SETUP: These are populated based on your background -->
-**For [YOUR_PRIMARY_ROLE_TYPE] roles:**
-> [YOUR_PROFILE_STATEMENT_TEMPLATE_1]
+**For Web UI / Senior Frontend Developer roles:**
+> Web UI Developer with 5+ years of experience building scalable, enterprise-grade web and mobile applications with React, Next.js, and TypeScript. Proven track record in microfrontends architecture, WCAG-compliant design systems, and mission-critical business rule implementations for tier-1 global clients like British Airways. Experienced in driving software quality with Vitest, automated CI/CD pipelines, and Clean Architecture.
 
-**For [YOUR_SECONDARY_ROLE_TYPE] roles:**
-> [YOUR_PROFILE_STATEMENT_TEMPLATE_2]
+**For Agentic Engineer / AI Applications Engineer roles:**
+> Senior Frontend & AI Engineer specializing in autonomous AI agents, Bedrock Knowledge Bases, and Model Context Protocol (MCP) integrations. Hands-on experience designing production-grade agentic workflows on AWS (Bedrock, Lambda, API Gateway, S3) with vector embeddings and document chunking. Combines modern frontend excellence in TypeScript and React with Python tooling to build robust AI-powered user experiences.
+
+**For Fullstack / Frontend Lead roles:**
+> Engineering Lead and Fullstack Developer with extensive experience leading cross-functional teams and shipping high-performance React/Node/Serverless architectures. Combines strong background in engineering optimization, Agile leadership, and mentoring with deep hands-on expertise in TypeScript, AWS serverless, and AI-accelerated developer workflows.
 
 Statements labeled *[Used for: <company>_<role>]* were extracted from archived application drafts by `/setup` Path A. They are **phrasing references, never fact sources**: when drafting from one, every factual claim still comes from `01-candidate-profile.md` - a past tailored draft does not vouch for its own accuracy.
 
