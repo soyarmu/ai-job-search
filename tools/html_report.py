@@ -514,6 +514,29 @@ def generate_dashboard(out_path_str="reports/application-dashboard.html"):
         .pill-hired { background-color: #dcfce7; color: #166534; }
         .pill-rejected { background-color: #fee2e2; color: #991b1b; }
 
+        .pill-fit-high { background-color: #dcfce7; color: #166534; }
+        .pill-fit-medium { background-color: #fef3c7; color: #92400e; }
+        .pill-fit-low { background-color: #fee2e2; color: #991b1b; }
+        .pill-fit-none { background-color: #f1f5f9; color: #64748b; }
+
+        .fit-block {
+            margin: 0.75rem 0 0.5rem;
+            padding: 0.625rem 0.75rem;
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+        }
+
+        .fit-block-title {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.03em;
+            margin-bottom: 0.35rem;
+        }
+
         .badge {
             display: inline-flex;
             align-items: center;
@@ -685,6 +708,13 @@ def generate_dashboard(out_path_str="reports/application-dashboard.html"):
                 <option value="new">New Opportunity</option>
                 <option value="ranked">Ranked Opportunity</option>
             </select>
+            <select id="fit-select" class="filter-select" onchange="applyFilters()">
+                <option value="">All Fit Levels</option>
+                <option value="high">High Fit</option>
+                <option value="medium">Medium Fit</option>
+                <option value="low">Low Fit</option>
+                <option value="unknown">Unrated</option>
+            </select>
             <select id="sector-select" class="filter-select" onchange="applyFilters()">
                 <option value="">All Sectors</option>
             </select>
@@ -706,6 +736,7 @@ def generate_dashboard(out_path_str="reports/application-dashboard.html"):
                         <th>Country</th>
                         <th>Sector</th>
                         <th>Channel</th>
+                        <th>Fit</th>
                         <th>Status</th>
                         <th style="text-align: center;">Actions</th>
                     </tr>
@@ -813,9 +844,34 @@ def generate_dashboard(out_path_str="reports/application-dashboard.html"):
             return 'Rejected/Closed';
         }
 
+        // Triage fit level: the scraper's rapid "high/medium/low" read, or the
+        // fit band from /rank when the posting has been scored. Ranked entries
+        // carry both, and the band is the more specific of the two.
+        function getFitLevel(r) {
+            const verdict = String(r.rank_verdict || '').toLowerCase();
+            if (verdict.includes('strong') || verdict.includes('good')) return 'high';
+            if (verdict.includes('moderate')) return 'medium';
+            if (verdict.includes('weak') || verdict.includes('poor')) return 'low';
+
+            const fit = String(r.fit_rating || '').toLowerCase().trim();
+            if (fit.startsWith('high') || fit === 'strong') return 'high';
+            if (fit.startsWith('med')) return 'medium';
+            if (fit.startsWith('low') || fit === 'weak') return 'low';
+
+            return 'unknown';
+        }
+
+        function fitBadgeHtml(r) {
+            const level = getFitLevel(r);
+            if (level === 'unknown') return '<span class="pill pill-fit-none">—</span>';
+            const label = level.charAt(0).toUpperCase() + level.slice(1);
+            return `<span class="pill pill-fit-${level}">${label}</span>`;
+        }
+
         function applyFilters() {
             const search = document.getElementById('search-input').value.toLowerCase();
             const statusFilter = document.getElementById('status-select').value;
+            const fitFilter = document.getElementById('fit-select').value;
             const sectorFilter = document.getElementById('sector-select').value;
             const countryFilter = document.getElementById('country-select').value;
 
@@ -845,6 +901,9 @@ def generate_dashboard(out_path_str="reports/application-dashboard.html"):
                         if (r.type !== 'application' || r.status !== statusFilter) return false;
                     }
                 }
+
+                // Fit dropdown filter
+                if (fitFilter && getFitLevel(r) !== fitFilter) return false;
 
                 // Sector dropdown filter
                 if (sectorFilter && r.sector !== sectorFilter) return false;
@@ -912,6 +971,7 @@ def generate_dashboard(out_path_str="reports/application-dashboard.html"):
                         <td>${htmlEscape(r.country || '—')}</td>
                         <td><span class="pill" style="background-color: #f1f5f9;">${sectorEsc}</span></td>
                         <td>${channelEsc}</td>
+                        <td>${fitBadgeHtml(r)}</td>
                         <td><span class="pill pill-${statusClass}">${statusLabel}</span></td>
                         <td style="text-align: center;" onclick="event.stopPropagation()">
                             <button class="btn-delete" onclick="deleteRow(${idx})" title="Delete entry">🗑️</button>
@@ -947,8 +1007,9 @@ def generate_dashboard(out_path_str="reports/application-dashboard.html"):
                                 <div class="drawer-grid">
                                     <div class="drawer-section">
                                         <h4>🎯 Match Assessment</h4>
-                                        <p style="margin-bottom: 0.5rem;">Fit rating: <strong>${r.fit_rating}</strong> ${r.rank_score ? `(Score: <strong>${r.rank_score}/100</strong>)` : ''}</p>
-                                        <p style="margin-bottom: 0.5rem; font-style: italic;">${r.rank_verdict || ''}</p>
+                                        <p style="margin-bottom: 0.5rem;">Fit probability: ${fitBadgeHtml(r)} ${r.rank_score ? `· Score: <strong>${r.rank_score}/100</strong>` : ''}</p>
+                                        <p style="margin-bottom: 0.5rem;">Fit rating: <strong>${htmlEscape(r.fit_rating)}</strong></p>
+                                        <p style="margin-bottom: 0.5rem; font-style: italic;">${htmlEscape(r.rank_verdict || '')}</p>
                                         <div style="margin-top: 0.5rem;">
                                             <p style="font-weight:700; font-size:0.8rem; text-transform:uppercase;">Strengths:</p>
                                             <ul style="margin-bottom: 0.5rem;">${strengthsLi}</ul>
