@@ -18,7 +18,7 @@ When the user provides a job posting (URL or text), follow this workflow:
 
 ### Step 1: Research & Evaluate Fit
 - Fetch the job posting content (use WebFetch for URLs). **A 403 is not a dead end** - follow the escalation order in `09-web-research.md` before concluding a page is unavailable, and prefer the employer's own careers posting over an aggregator listing
-- Keep the **full posting text verbatim** for Step 3b to archive - never a summary
+- Keep the **full posting text verbatim** - `/cv` archives it, never a summary
 - Analyze the posting for required competencies, keywords, and priorities
 - Research the company (website, LinkedIn, mission, recent news), per `09-web-research.md`
 - Score the posting against the candidate's profile using the framework in `04-job-evaluation.md`
@@ -26,25 +26,10 @@ When the user provides a job posting (URL or text), follow this workflow:
 - Suggest whether the candidate should call the employer before applying (see `04-job-evaluation.md` for guidance)
 - Ask the user if they want to proceed with an application
 
-### Step 2: Tailor CV
-- Before writing either document, derive `<company>_<role>` once by the **Subfolder naming** rule in `documents/README.md`; reuse that exact value for the CV, cover letter, and Step 3b archive path. If the rule says to stop because the derived name is empty, stop before creating any file.
-- Read the most relevant existing CV variant from `cv/` as a starting point
-- Follow the guidelines in `05-cv-templates.md`
-- Create `cv/main_<company>_<role>.tex` with tailored content
-- Adjust: profile statement, skills section, experience bullet emphasis, section order
+### Step 2: Generate CV
+- To create a CV, run `/cv` (`.claude/commands/cv.md` → `tools/gen_cv.py`): one LLM call picks content IDs from `cv/master.json`, one lualatex compile, then records the tracker row and archives the posting. Do not hand-write or edit the CV; `gen_cv.py` owns it. If the user wants changes, they edit `cv/master.json` or ask explicitly.
 
-### Step 3: Write Cover Letter
-- Follow the writing style rules in `03-writing-style.md` (critical: no em-dashes, no cliches)
-- Follow the template structure in `06-cover-letter-templates.md`
-- Create `cover_letters/cover_<company>_<role>.tex`
-- Ensure the letter connects specific experience to the role requirements
-
-### Step 3b: Record the Application
-- Run this once both documents exist. A CV or cover letter drafted alone is not yet an application.
-- Follow **`/apply` Step 6b** (`.claude/commands/apply.md`) exactly: same header, same match-then-update rule, same `drafted` row, same posting archive, same prohibition on touching `job_scraper/seen_jobs.json`. It is stated there once so the two paths cannot drift. Four of its values are named in `/apply`'s own terms: `cv_file`/`cover_letter_file` are the paths written in Steps 2 and 3 here, `source` is the posting URL from Step 1, `deadline` is the application deadline from the posting text Step 1 keeps verbatim (empty when the posting states none - never guess one), and the posting text item 7 archives is the one Step 1 read.
-- This step exists here because `/scrape` Step 5 routes straight into this skill. Without it, that path writes two documents and records nothing.
-
-### Step 4: Interview Preparation
+### Step 3: Interview Preparation
 - Follow the framework in `07-interview-prep.md`
 - Prepare STAR-format answers for likely questions
 - Identify role-specific talking points
@@ -72,7 +57,6 @@ When the user provides a job posting (URL or text), follow this workflow:
 
 The user may also ask for individual steps without the full workflow:
 - "Evaluate this job posting" - Step 1 only
-- "Write a CV for [company]" - Step 2 only
-- "Write a cover letter for [role] at [company]" - Step 3 only
-- "Help me prepare for an interview at [company]" - Step 4 only
+- "Write a CV for [company]" - run `/cv <url>` (Step 2)
+- "Help me prepare for an interview at [company]" - Step 3 only
 - "What jobs should I look for?" - Career strategy discussion using profile + evaluation framework

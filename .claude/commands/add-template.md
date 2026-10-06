@@ -1,6 +1,6 @@
 # /add-template - Register a Custom CV or Cover Letter Template
 
-You are helping the user register their own CV or cover letter template with the AI Job Search framework — LaTeX, Typst, or any other toolchain that compiles to PDF from the command line. The framework ships with moderncv (banking style) for CVs and a custom `cover.cls` for cover letters. This command lets the user swap in their own template: store the template files, capture usage instructions (source extension, compile command, fonts, style rules, page limits), verify the template compiles, and wire it into the `/apply` workflow so every future application uses it.
+You are helping the user register their own CV or cover letter template with the AI Job Search framework — LaTeX, Typst, or any other toolchain that compiles to PDF from the command line. The framework ships with moderncv (banking style) for CVs and a custom `cover.cls` for cover letters. This command lets the user swap in their own template: store the template files, capture usage instructions (source extension, compile command, fonts, style rules, page limits), verify the template compiles, and wire it into the `/cv` workflow so every future application uses it.
 
 `$ARGUMENTS` may contain a subcommand, a file path, or nothing.
 
@@ -68,23 +68,23 @@ Read every provided file. If the template references an include the declared too
 
 ## Step 2: Capture Template Instructions
 
-Interview the user for the metadata that `/apply` needs to use the template correctly. Infer as much as possible from the source first (LaTeX: documentclass, `\fontspec` calls, geometry, colors; Typst: `#set`/`#show` rules, `#import`s; other toolchains: whatever the format exposes) and present your inferences for confirmation rather than asking blind questions.
+Interview the user for the metadata that `/cv` needs to use the template correctly. Infer as much as possible from the source first (LaTeX: documentclass, `\fontspec` calls, geometry, colors; Typst: `#set`/`#show` rules, `#import`s; other toolchains: whatever the format exposes) and present your inferences for confirmation rather than asking blind questions.
 
 Collect:
 
 1. **Name** - short kebab-case identifier (e.g. `awesome-cv`, `classic-serif`). Must not collide with an existing folder in `templates/`.
 2. **Source extension** - the main file's extension (`.tex`, `.typ`, ...), inferred from the provided source file.
-3. **Compile command** - the full command `/apply` and Step 4's test compile will run, using `<file>` (no extension) as the placeholder for the output basename:
+3. **Compile command** - the full command `/cv` (tools/gen_cv.py) and Step 4's test compile will run, using `<file>` (no extension) as the placeholder for the output basename:
    - **`.tex` source**: infer the engine the same way as before - if the source uses `fontspec` or loads font files by path, it requires `xelatex` or `lualatex`; tell the user this rather than letting them pick `pdflatex`. Render as `rm -f <file>.pdf && mkdir -p build && lualatex -interaction=nonstopmode -output-directory=build <file>.tex && mv build/<file>.pdf ./` (or the appropriate engine).
    - **`.typ` source**: default to `typst compile <file>.typ <file>.pdf` - Typst has a single binary, no engine choice.
    - **Anything else**: no built-in guidance; ask the user for the exact compile command.
 
-   **Build directory rule:** if the toolchain can redirect its intermediate files, the declared command sends them to a `build/` folder beside the source, and still leaves the PDF next to the source, where `/apply` reads it. For LaTeX, use `-output-directory=build`. It also moves the PDF, hence the `mv`. TeX Live does not create the directory, hence the `mkdir -p`. A failed compile skips the `mv`, hence the leading `rm -f`, so a failed LaTeX compile never leaves a stale PDF where `/apply` inspects it. After a failed compile, read the log in `build/`. If Step 4 fails only because of the redirect (e.g. `\include` from a subfolder), drop the redirect but keep the leading `rm -f`, and record why under "Known pitfalls". If the toolchain writes nothing but the PDF (`typst compile`) or has no redirect option, keep the command as it is - never block registration on this rule.
+   **Build directory rule:** if the toolchain can redirect its intermediate files, the declared command sends them to a `build/` folder beside the source, and still leaves the PDF next to the source, where `/cv` reads it. For LaTeX, use `-output-directory=build`. It also moves the PDF, hence the `mv`. TeX Live does not create the directory, hence the `mkdir -p`. A failed compile skips the `mv`, hence the leading `rm -f`, so a failed LaTeX compile never leaves a stale PDF where `/cv` inspects it. After a failed compile, read the log in `build/`. If Step 4 fails only because of the redirect (e.g. `\include` from a subfolder), drop the redirect but keep the leading `rm -f`, and record why under "Known pitfalls". If the toolchain writes nothing but the PDF (`typst compile`) or has no redirect option, keep the command as it is - never block registration on this rule.
 4. **Fonts** - which font(s) the template uses and where they come from:
    - **Bundled font files** (`.ttf`/`.otf` shipped with the template): copy them into the template folder in Step 3 and record the relative path used to load them (LaTeX `\fontspec` `Path`, Typst `#import`/font path, or equivalent).
    - **System / distribution fonts**: record the font name and note that the user's machine must have it installed.
 5. **Style rules** - anything the drafter must preserve when filling the template: color scheme, section order, heading style, spacing conventions, bullet formatting, date format.
-6. **Page limit** - hard page count for the compiled PDF. Default: **2 pages** for a CV, **1 page** for a cover letter. `/apply`'s compile-and-inspect loop enforces this.
+6. **Page limit** - hard page count for the compiled PDF. Default: **2 pages** for a CV, **1 page** for a cover letter. `/cv`'s compile-and-inspect loop enforces this.
 7. **Known pitfalls** (optional) - macros/rules that break with certain content (like the stock template's `\lettercontent{}`/`itemize` interaction), characters that need escaping, sections that must not be reordered.
 
 ---
@@ -148,7 +148,7 @@ Do not proceed to Step 5 until the test compile passes.
 
 ## Step 5: Activate the Template
 
-Activation wires the template into `/apply` by adding a **managed block** to the top of the relevant guidance file — `05-cv-templates.md` for CVs, `06-cover-letter-templates.md` for cover letters. `/apply` reads these files in both its drafting step and its compile step, so the block is all it takes.
+Activation wires the template into `/cv` by adding a **managed block** to the top of the relevant guidance file — `05-cv-templates.md` for CVs, `06-cover-letter-templates.md` for cover letters. `/cv` reads these files in both its drafting step and its compile step, so the block is all it takes.
 
 If Step 5 was reached from Switch Mode, use the template metadata resolved from `TEMPLATE.md`. If Step 5 was reached after registering a new template, use the metadata collected and verified in Steps 2-4.
 
@@ -163,7 +163,7 @@ Insert (or replace, if one exists) this block immediately after the file's H1 ti
 > - **Template skeleton:** `templates/<type>/<name>/template<source-extension>` — use this as the structural reference instead of the stock template
 > - **Manifest:** `templates/<type>/<name>/TEMPLATE.md` — read this for style rules and known pitfalls before drafting
 > - **Source extension:** `<source-extension>` (not `.tex` unless the template's own toolchain is LaTeX)
-> - **Compile command:** `<the full declared command>` (not the command named in the stock guidance below — `/apply`'s compile step must use this instead). Run it from the output directory. If it redirects to `build/`, the log is in `build/`, and `/apply`'s Step 5e cleanup must delete that `build/` folder too
+> - **Compile command:** `<the full declared command>` (not the command named in the stock guidance below — `/cv`'s compile step must use this instead). Run it from the output directory. If it redirects to `build/`, the log is in `build/`, and `/cv`'s Step 5e cleanup must delete that `build/` folder too
 > - **Fonts:** <font summary, including any path note for bundled fonts>
 > - **Page limit:** exactly <N> page(s)
 > - **Output file:** `cv/main_<company>_<role><source-extension>` / `cover_letters/cover_<company>_<role><source-extension>`; copy any class/package/font files the template needs into the output directory, or reference them by relative path
@@ -186,7 +186,7 @@ Present a summary:
 >
 > - Files: `templates/<type>/<name>/` (skeleton, manifest<, class/package files><, fonts>)
 > - Test compile: passed with `<compile command>` (<N> page(s))
-> - `/apply` will now draft <CVs | cover letters> from this template.
+> - `/cv` will now draft CVs from this template.
 >
 > Useful follow-ups:
 > - `/add-template --list` — see all registered templates
@@ -199,5 +199,5 @@ Present a summary:
 
 - Registration is idempotent: re-running with the same name offers to update the existing template rather than duplicating it.
 - Templates are stored profile-agnostic (`[PLACEHOLDER]` tokens) so they can be shared or committed without leaking personal data.
-- The compile check in Step 4 is non-negotiable — a template that has never compiled will fail mid-`/apply`, which is the worst place to discover it.
+- The compile check in Step 4 is non-negotiable — a template that has never compiled will fail mid-`/cv`, which is the worst place to discover it.
 - Activation is a small managed block, not a rewrite of the guidance files: `/setup` and manual edits to `05`/`06` survive template switches, and `--use default` is a clean revert.

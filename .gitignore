@@ -27,6 +27,10 @@ salary_data.json
 **/job_scraper/seen_jobs.json
 **/job_scraper/notion_sync.json
 **/job_scraper/*.md
+# Scraped postings and cache backups (personal job-search history)
+**/job_scraper/archive/
+**/job_scraper/posting_*.txt
+**/job_scraper/tmp_posting.txt
 *_BehavioralReport.pdf
 linkedin_Profile.pdf
 
@@ -65,6 +69,8 @@ skills-lock.json
 cv/main_*.*
 !cv/main_example.tex
 cv/*.txt
+# Candidate profile data (phone, email, LinkedIn) — never share
+cv/master.json
 cover_letters/cover_*.*
 cover_letters/Cover_*.*
 !cover_letters/cover_example.tex

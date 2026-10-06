@@ -1,8 +1,8 @@
 # /rank - Triage Scraped Jobs into a Ranked Shortlist
 
-You are batch-scoring the jobs that `/scrape` has collected, so the user can decide where to spend `/apply` effort. `/scrape` finds and dedupes postings; `/apply` evaluates one at a time in depth. `/rank` is the bridge: it scores every new posting against the fit framework and returns a ranked shortlist.
+You are batch-scoring the jobs that `/scrape` has collected, so the user can decide where to spend `/cv` effort. `/scrape` finds and dedupes postings; `/cv` generates a tailored CV one at a time. `/rank` is the bridge: it scores every new posting against the fit framework and returns a ranked shortlist.
 
-`/rank` produces **triage scores**, not final evaluations. It scores from the posting text and the candidate profile only - no company research, no reviewer agent. `/apply`'s Step 1 evaluation (which adds company research) remains authoritative and always re-runs when the user applies.
+`/rank` produces **triage scores**, not final evaluations. It scores from the posting text and the candidate profile only - no company research, no reviewer agent. `/cv`'s evaluation is produced by `tools/gen_cv.py`, which does not add company research; the triage score here is the standing read and does not itself select CV content.
 
 Follow these steps **in order**.
 
@@ -44,12 +44,12 @@ State how many jobs will be ranked and how many are deferred before proceeding.
 
 ## Step 2: Batch-Fetch and Score
 
-Dispatch parallel `general-purpose` agents via the **Agent tool**, ~5 jobs per agent (a single agent is fine for ≤5 jobs). Token-efficiency rules, consistent with `/apply`:
+Dispatch parallel `general-purpose` agents via the **Agent tool**, ~5 jobs per agent (a single agent is fine for ≤5 jobs). Token-efficiency rules:
 
 - Pass each agent everything it needs **inline in the prompt** - the job list (title, company, URL) and a compact scoring rubric extracted from the files you read in Step 1: the strong/moderate/weak skill match areas, direct/adjacent experience domains, behavioral thrive/drain factors, career goals, deal-breakers, and the location constraints. Do **not** make agents re-read the profile files.
 - Agents fetch each posting URL with WebFetch and score **only from actually fetched content**. If a URL is dead, redirects to a listing page, or the posting has expired, the agent marks that job `expired` - it never scores from the title alone and never fabricates posting content.
 - **Before marking anything `expired`, the agent must exhaust the escalation order** in `.claude/skills/job-application-assistant/09-web-research.md`: a `WebFetch` 403 is a rejected *client*, not a missing page, and retrying with browser headers via curl recovers most corporate and bank domains. A stored URL ending in a `#fragment` points at a listing page rather than a posting, so the agent should search the employer's own careers site for the role by name before writing the job off. Include this instruction in every scoring agent's prompt. `expired` means "retrieval genuinely failed after retrying", not "the first fetch was unhelpful".
-- Scope is triage: posting text vs. rubric. **No company research, no salary lookup, no web searches** - that depth belongs to `/apply`.
+- Scope is triage: posting text vs. rubric. **No company research, no salary lookup, no web searches** - that depth was `/apply`'s and no longer exists; `/cv` (tools/gen_cv.py) also does none of it.
 
 Each agent returns a JSON array, one object per job:
 
@@ -171,9 +171,9 @@ Rules for the presentation:
 - Every table (shortlist, below threshold, excluded) includes the posting URL as a clickable link - use the `url` in `apply`'s output (not the entry's key, which for some portals is a company+title composite rather than the URL), so this never requires an extra lookup. Never drop the link for brevity.
 - A shortlisted job with `language_gate: FLAG` gets a ⚠ marker next to its Title (same treatment as a location FLAG) and its `language_note` quoted in that job's "Why these ranked highest" writeup, so the language-level gap is visible without digging into the raw JSON.
 - Every claim traces to fetched posting text or the profile - no invented details.
-- Say explicitly that these are **triage scores from the posting text only**, and that `/apply` will re-evaluate with company research before anything is drafted.
-- Then ask: "Want to apply to any of these? Give me the number(s) and I'll start with the full `/apply` workflow."
-- If the user picks one, run the `/apply` workflow on that job's URL, passing the triage verdict as prior context but **re-running the full Step 1 evaluation** - triage never substitutes for it.
+- Say explicitly that these are **triage scores from the posting text only**. Generating a CV is a separate step that does not re-run this evaluation.
+- Then ask: "Want a CV for any of these? Give me the number(s) and I'll run `/cv <url>`."
+- If the user picks one, run `/cv` on that job's URL - it generates a tailored CV via `tools/gen_cv.py` (one LLM call, one compile) and records the tracker row.
 
 ---
 

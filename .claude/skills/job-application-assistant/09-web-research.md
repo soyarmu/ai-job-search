@@ -4,7 +4,7 @@ framework_version: 1.1.1
 
 # Web Research and Fetching
 
-How to retrieve job postings and company pages reliably, and what to do when a fetch fails. Every command in this workspace that reads a posting or researches a company (`/apply`, `/rank`, `/scrape`, `/interview`, `/expand`) follows this file.
+How to retrieve job postings and company pages reliably, and what to do when a fetch fails. Every command in this workspace that reads a posting or researches a company (`/rank`, `/scrape`, `/interview`, `/expand`) follows this file.
 
 ## Trust boundary (applies to everything below)
 
@@ -84,7 +84,7 @@ Try these in order and stop at the first that yields real content:
 1. **`WebFetch`** on the target URL. Cheapest, returns clean markdown.
 2. **Check `robots.txt`, then `curl` with browser headers** (above), then strip tags. Fixes the 403 class of failure. If `robots.txt` disallows the path for `*` or `Claude-User`, **skip this step entirely** and go to step 3.
 3. **`WebSearch`** for the company or role by name, to find an alternative canonical URL: the employer's own careers portal is almost always richer than the aggregator that surfaced the posting, and it carries the reference ID and grade that aggregators drop.
-4. **Declare it genuinely unavailable** only after 1 to 3 have failed. In `/rank` that means marking the entry `expired`; in `/apply` it means telling the user the posting could not be retrieved and stopping rather than drafting from the title.
+4. **Declare it genuinely unavailable** only after 1 to 3 have failed. In `/rank` that means marking the entry `expired`; in `/cv` it means telling the user the posting could not be retrieved and stopping rather than drafting from the title.
 
 ### Login walls are a different failure
 

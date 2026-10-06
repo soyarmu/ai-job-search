@@ -22,7 +22,9 @@ Read in parallel:
    Rows written before `deadline` existed have thirteen fields and no fourteenth value. Treat the missing field as empty - never drop the row, and never infer a deadline from its `date`.
 
 2. **`job_scraper/seen_jobs.json`** — Load if present (default to empty list if missing). Parse each entry from the `seen` dictionary:
-   `title`, `company`, `url`, `first_seen`, `posted_date`, `deadline`, `fit`, `status` (new/skipped/ranked/expired), `portal`, `source`, `rank_score`, `rank_verdict`, `strengths`, `gaps`.
+   `title`, `company`, `url`, `first_seen`, `posted_date`, `deadline`, `fit`, `fit_score`, `status` (new/skipped/ranked/expired), `portal`, `source`, `rank_score`, `rank_verdict`, `strengths`, `gaps`.
+
+3. **`job_scraper/summaries.json`** — Load if present (default to empty dict). Maps a posting key (normalized URL, or lowercase `company|role`) to `{company, role, summary}`. Written by `tools/gen_cv.py` (`--summarize-only` and the CV path). The Summary column reads from here at generation time.
 
 3. **`documents/applications/*/outcome.md`** — Read outcome files to extract the exact interview stages reached (checkboxes) and any notes.
 
@@ -35,6 +37,7 @@ Match tracker CSV rows and `seen_jobs.json` entries:
   - `date_applied` = CSV `date`
   - `rank_score` = JSON `rank_score` (if present)
   - `rank_verdict` = JSON `rank_verdict`
+  - `fit_score` = JSON `fit_score` (if present)
   - `strengths` = JSON `strengths`
   - `gaps` = JSON `gaps`
 - **CV / Cover Letter Existence check**:
@@ -42,7 +45,7 @@ Match tracker CSV rows and `seen_jobs.json` entries:
   - `has_cl` is true if the CSV `cover_letter_file` is non-empty, OR if a file matching `cover_letters/cover_<company>_<role>.*` or `documents/applications/<company>_<role>/cover_letter.*` exists on disk.
 
 Status normalisation — map tracker values to six canonical buckets before computing stats:
-- `drafted` → **Drafted** (documents written by `/apply`, not yet submitted)
+- `drafted` → **Drafted** (CV written by `/cv`, not yet submitted)
 - `applied` → **Active** (resume submitted, no further signal)
 - `interview` → **Interview**
 - `offer` → **Offer**
@@ -112,6 +115,7 @@ Write a single self-contained HTML file with inline CSS and JS. Draw the charts 
   - Medium: `#fef3c7` on `#92400e` (amber)
   - Low: `#fee2e2` on `#991b1b` (red)
   - Unrated: `#f1f5f9` on `#64748b` (slate) — renders as `—`
+  - Each badge also shows the numeric score when one exists — `rank_score` if present, else the scrape-time `fit_score` — e.g. `High (82)`, `Medium (57)`. A job with no stored score renders as a bare badge.
 - **Font:** system-ui stack, no web fonts
 - **Stat cards:** white background, subtle shadow, large bold number, label below, left border in status colour
 - **Charts:** contained in a 2-column grid on wide screens, stacked on narrow
@@ -119,7 +123,7 @@ Write a single self-contained HTML file with inline CSS and JS. Draw the charts 
 - **Table:**
   - Alternating row shading
   - Clickable row that **toggles open an expandable detailed accordion drawer**:
-    - **Match Score / Fit**: Showing `rank_score`, `rank_verdict`, and specific lists of `strengths` and `gaps` from `seen_jobs.json`.
+    - **Match Score / Fit**: Showing `rank_score`, `rank_verdict`, and specific lists of `strengths` and `gaps` from `seen_jobs.json`. For a job not yet ranked, show instead the scrape-time triage score and band (`fit_score`, `fit`) so the drawer is never empty — label it "scrape triage" to keep it distinct from a full `/rank` verdict.
     - **Key Requirements**: From `seen_jobs.json`.
     - **Referral Helpers**: Actionable search links for LinkedIn:
       - *Recruiter search*: `https://www.linkedin.com/search/results/people/?keywords=<Company>+recruiter`
@@ -129,7 +133,7 @@ Write a single self-contained HTML file with inline CSS and JS. Draw the charts 
   - CV/CL columns use high-visibility interactive badges (📄 checkmark if exists, ❌ if missing).
   - `Source` column renders as a hyperlink if the value is a URL (starts with `http`).
   - Empty cells render as `—`.
-  - Fit column renders the fit probability badge (High / Medium / Low / `—`). When both a triage `fit` and a ranked `rank_verdict` exist, the verdict band wins as the more specific read.
+  - Fit column renders the fit probability badge (High / Medium / Low / `—`). When both a triage `fit` and a ranked `rank_verdict` exist, the verdict band wins as the more specific read. The badge label carries the numeric score when one exists — `rank_score` takes precedence over `fit_score` — so a scraped-but-unranked job shows its triage number (e.g. `High (82)`), a ranked job its rank score, and a job with neither a bare badge.
   - Client-side filter: text input (Company/Role/Sector/Notes), status dropdown, fit dropdown, sector dropdown (all combine via AND).
   - Sorted newest-first by default (by `date` descending, then alphabetically by company).
 - **Responsive:** usable at 900px+, not broken below that
@@ -144,9 +148,16 @@ Write a single self-contained HTML file with inline CSS and JS. Draw the charts 
 
 ### Table: columns to include
 
-`Date` · `Deadline` · `Company` · `Role` · `Sector` · `Channel` · `Fit` · `Status` · `Notes` (truncated to 80 chars with `title` tooltip for full text) · `Source` (link or `—`)
+`Date` · `Deadline` · `Company` · `Role` · `Summary` · `Sector` · `Channel` · `Fit` · `Status` · `Notes` (truncated to 80 chars with `title` tooltip for full text) · `Source` (link or `—`) · `Actions` (Generate CV + delete)
 
 Columns with only empty values across all rows may be omitted.
+
+### Summary column & Generate CV
+
+- **Summary**: from `summaries.json`, embedded at generation time. When a row has no summary, render a small "Summarize" link that `POST`s to `/api/summary` and fills the cell in place.
+- **Generate CV** button per row: `POST /api/cv` with `{url}` (when the row has a source URL) or `{text, company, role}` as a paste fallback. Disable + spinner while running, then show fit / gaps / tokens and a link to `cv/main_<company>_<role>.pdf`.
+- When the page is opened as `file://` (no local server), the buttons show a hint: "Run: python3 tools/dashboard_server.py".
+- `tools/dashboard_server.py` serves the dashboard and these two endpoints on `127.0.0.1:8765`. Rendering the dashboard must never call an LLM; only the buttons (via the server) do.
 
 ---
 
@@ -166,7 +177,7 @@ Then present:
 > - Opportunities: N
 > - Funnel: N% progressed past resume screen
 >
-> Re-run `/html-report` any time after adding new entries via `/apply` or `/outcome` to refresh the dashboard.
+> Re-run `/html-report` any time after adding new entries via `/cv` or `/outcome` to refresh the dashboard.
 
 ---
 

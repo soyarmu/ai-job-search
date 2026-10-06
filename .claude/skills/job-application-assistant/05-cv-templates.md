@@ -179,6 +179,7 @@ Claiming a credential not yet held is a factual misstatement, and it is the kind
 - Rewrite bullet points to emphasize aspects most relevant to the target role
 - Use 4-6 bullets for most recent role, 3-4 for previous, 2-3 for older
 - **Emphasize measurable results** where possible: "Reduced processing time by X%", "Model adopted by the team"
+- **Every bullet must satisfy the XYZ rule** - see "The XYZ Rule for Achievement Bullets" below. It is a hard gate, not a preference.
 
 #### Check tenure against visible output
 
@@ -238,6 +239,97 @@ Two failure modes deserve special care:
 - **`&` fails loudly** inside `\cventry` (alignment-tab errors, `Missing } inserted`). The compile loop catches it, but escape employer names up front rather than debugging the compile.
 
 Related trap: a bullet whose text begins with a literal `[` must be braced - `\item {[text]}` - or LaTeX parses the bracketed text as `\item`'s optional label and renders it clipped off the left page edge with a clean compile. The example CV's placeholder bullets are braced for exactly this reason.
+
+## The XYZ Rule for Achievement Bullets (constitutional)
+
+**This rule is a law of this repo, not a style preference.** It applies to **every** CV produced by
+**any** path - `/cv`, the `/scrape` route into `SKILL.md`, and any command added later.
+It is stated here, once, so every path inherits it by reading this file. Do not restate it elsewhere;
+cite this section.
+
+### The formula
+
+Every bullet under **Professional Experience** must follow Google's XYZ formula:
+
+> **Accomplished [X] as measured by [Y] by doing [Z]**
+
+- **X - the accomplishment.** What was actually built, shipped, fixed, or led. Open with a strong
+  action verb (*Designed, Implemented, Shipped, Led, Reduced, Automated*). Never open with
+  "Responsible for" or "Worked on".
+- **Y - the measurement.** The result, stated in the same sentence as X. A reader skimming only the
+  first eight words of each bullet must still see an outcome. Never bury Y in a trailing clause that
+  the page break or the reader's attention can cut off.
+- **Z - the method.** The specific tool, architecture, or technique that produced X. This is where
+  the posting's exact keywords belong - ATS matching is often literal, and the concrete noun
+  ("Bedrock Knowledge Bases", "React Hook Form", "WCAG") is what gets matched.
+
+The three parts belong in **one bullet**, not three. A bullet carrying X and Z but no Y is an
+incomplete bullet; so is one carrying X and Y but no Z.
+
+### The honesty boundary (read before writing any Y)
+
+**A bullet must never ship with a placeholder or invented metric.** The XYZ rule demands a
+measurement; it does not license you to invent one. Fabricated numbers are the single most damaging
+failure this repo can produce: they are discovered at reference check rather than at interview, and
+they poison every other claim on the page.
+
+Resolve Y in this order:
+
+1. **A metric stated in the profile sources.** Use it verbatim. The sources are
+   `01-candidate-profile.md`, the master CV `cv/main_example.tex`, and `CLAUDE.md`'s Candidate
+   Profile section. If a number appears in one of them, it is grounded and may be used.
+2. **A metric the user supplies in conversation.** Ask for it when a bullet's Y would otherwise be
+   weak - "did this ship to production, and how many users did it reach?" A metric the user states
+   out loud is real. Per the standing rule in `/cv`, write it back into
+   `01-candidate-profile.md` **in the same turn** so it is grounded on the next run; a fact that
+   lives only in chat is treated as unsupported by the next session and silently stripped.
+3. **A verifiable non-numeric outcome.** When no honest number exists, write the strongest outcome
+   that a reader can check: `shipped to production`, `released to iOS and Android`, `tier-1 client
+   British Airways`, `WCAG compliant`, `adopted by the team`, `integrated with Amadeus`. These are
+   real measurements of impact, and they are honest.
+
+**Never** do any of the following: invent a percentage, an hours-saved figure, a user count, a
+latency improvement, or a revenue number; inflate a range ("2-3 days" becomes "cut cycle time by
+60%"); or attach a number to work whose scope you cannot defend in an interview.
+
+**Apply the interview backtrack test** (see `03-writing-style.md` rule 6): if the candidate would
+have to say "well, what I actually meant was..." when asked about a bullet's Y, that Y is too far.
+
+### The gate
+
+**This is a hard gate, not a preference.** Before compiling, walk every Professional Experience
+bullet and confirm it carries an X, a Y, and a Z, with the Y either a grounded metric or a
+verifiable non-numeric outcome. **Rewrite any bullet that fails before the compile step.** Report
+the result as an XYZ table (bullet -> X / Y / Z) in the final output, flagging every bullet whose Y
+is a verifiable outcome rather than a metric, so the user can supply a number for the next run.
+
+### Worked examples
+
+```latex
+% WRONG - X and Z, no Y. Reads as a job description, not an achievement.
+\item {Designed an autonomous AI agent on AWS Bedrock for ticket resolution.}
+
+% WRONG - invented metric. The sources contain no such number.
+\item {Designed an autonomous AI agent that reduced ticket resolution time by 40\%.}
+
+% WRONG - Y buried in a trailing clause the reader will not reach.
+\item {Designed an autonomous AI agent on AWS Bedrock for ticket resolution, and this
+       contributed to improved operational efficiency across the support organisation.}
+
+% RIGHT - grounded metric (only when the sources actually state one).
+\item {Designed an autonomous AI agent on AWS Bedrock that cut ticket resolution time by
+       40\%, using Bedrock Knowledge Bases with vector embeddings and document chunking.}
+
+% RIGHT - verifiable non-numeric Y. Honest, specific, checkable.
+\item {Designed and shipped to production an autonomous AI agent on AWS Bedrock for ticket
+       resolution, built on Bedrock Knowledge Bases with vector embeddings and document
+       chunking.}
+```
+
+Note the second "RIGHT" example: `shipped to production` is the Y. It is not a number, and it is not
+a placeholder - it is a checkable statement about impact, and it is exactly what the honesty
+boundary calls for when the sources hold no metric. Prefer a grounded number whenever one exists;
+fall back to this only when it does not.
 
 ## Compile-and-Inspect Loop (MANDATORY)
 
