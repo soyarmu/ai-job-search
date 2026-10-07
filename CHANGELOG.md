@@ -71,6 +71,18 @@ per-file diff commands.
 
 ### Changed
 
+- **`/cv` no longer calls an external LLM or asks for a model** (`.claude/commands/cv.md`,
+  `tools/gen_cv.py`,
+  `.claude/skills/job-application-assistant/SKILL.md`) - the Gemini API dependency
+  (API key, model env var) and the interactive model picker are gone: `tools/model_picker.py`
+  and the `gemini-research-expert` agent were removed. Tailoring now happens in the
+  assistant itself: `/cv` evaluates the posting, selects content IDs from
+  `cv/master.json`, and passes them to `gen_cv.py` as a selection JSON. The script only
+  builds the LaTeX, compiles, records the tracker row, and archives the posting. The
+  dashboard server and its `/api/summary`/`/api/cv` endpoints were removed entirely — the
+  dashboard's "Generate CV" button now copies `/cv <url>` for the user to paste into
+  Claude Code.
+
 - **`/add-template` keeps a registered template's intermediates in `build/`**
   (#473, `.claude/commands/add-template.md`, `.gitignore`,
   `tests/test_add_template_build_dir.py`) - the elicited compile command

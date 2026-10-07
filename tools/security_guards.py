@@ -57,6 +57,8 @@ ALLOWED_PERMISSIONS = {
     "Bash(python3 tools/job_key.py:*)",
     "Bash(python tools/verify_pdf.py:*)",
     "Bash(python3 tools/verify_pdf.py:*)",
+    "Bash(python tools/gen_cv.py:*)",
+    "Bash(python3 tools/gen_cv.py:*)",
     "Bash(python tools/verify_layout.py:*)",
     "Bash(python3 tools/verify_layout.py:*)",
     "Bash(pdftotext:*)",

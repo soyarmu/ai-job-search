@@ -27,7 +27,7 @@ When the user provides a job posting (URL or text), follow this workflow:
 - Ask the user if they want to proceed with an application
 
 ### Step 2: Generate CV
-- To create a CV, run `/cv` (`.claude/commands/cv.md` → `tools/gen_cv.py`): one LLM call picks content IDs from `cv/master.json`, one lualatex compile, then records the tracker row and archives the posting. Do not hand-write or edit the CV; `gen_cv.py` owns it. If the user wants changes, they edit `cv/master.json` or ask explicitly.
+- To create a CV, run `/cv` (`.claude/commands/cv.md` → `tools/gen_cv.py`): the assistant evaluates the posting and picks content IDs from `cv/master.json` (no external LLM call, no API keys, no model choice), then `gen_cv.py` does one lualatex compile, records the tracker row, and archives the posting. Do not hand-write or edit the CV; `gen_cv.py` owns it. If the user wants changes, they edit `cv/master.json` or ask explicitly.
 
 ### Step 3: Interview Preparation
 - Follow the framework in `07-interview-prep.md`

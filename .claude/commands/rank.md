@@ -2,7 +2,7 @@
 
 You are batch-scoring the jobs that `/scrape` has collected, so the user can decide where to spend `/cv` effort. `/scrape` finds and dedupes postings; `/cv` generates a tailored CV one at a time. `/rank` is the bridge: it scores every new posting against the fit framework and returns a ranked shortlist.
 
-`/rank` produces **triage scores**, not final evaluations. It scores from the posting text and the candidate profile only - no company research, no reviewer agent. `/cv`'s evaluation is produced by `tools/gen_cv.py`, which does not add company research; the triage score here is the standing read and does not itself select CV content.
+`/rank` produces **triage scores**, not final evaluations. It scores from the posting text and the candidate profile only - no company research, no reviewer agent. `/cv`'s evaluation is produced by the assistant and passed to `tools/gen_cv.py` as a selection JSON; the triage score here is the standing read and does not itself select CV content.
 
 Follow these steps **in order**.
 
@@ -173,7 +173,7 @@ Rules for the presentation:
 - Every claim traces to fetched posting text or the profile - no invented details.
 - Say explicitly that these are **triage scores from the posting text only**. Generating a CV is a separate step that does not re-run this evaluation.
 - Then ask: "Want a CV for any of these? Give me the number(s) and I'll run `/cv <url>`."
-- If the user picks one, run `/cv` on that job's URL - it generates a tailored CV via `tools/gen_cv.py` (one LLM call, one compile) and records the tracker row.
+- If the user picks one, run `/cv` on that job's URL - the assistant evaluates the posting, `tools/gen_cv.py` builds and compiles the tailored CV, and the script records the tracker row.
 
 ---
 

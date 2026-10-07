@@ -1,4 +1,5 @@
 export const SEARCH_URL = "https://www.getonbrd.com/api/v0/search/jobs"
+export const COMPANY_URL = "https://www.getonbrd.com/api/v0/companies"
 
 export function writeError(error: string, code: string): void {
   process.stderr.write(JSON.stringify({ error, code }) + "\n")
@@ -68,13 +69,49 @@ function cleanHtml(html: string): string {
     .trim()
 }
 
+/** In-memory cache of company-id → name, keyed by numeric company id. */
+const companyNameCache = new Map<string, string>()
+
+/** Best-effort fallback: derive a company name token from the job slug's tail. */
+function companyFromSlug(id: string): string | null {
+  if (!id) return null
+  const parts = id.split("-")
+  if (parts.length < 2) return null
+  // Get on Board slugs end "-<company>-<location>"; the company token is the
+  // second-to-last segment. (Segments themselves may already be hyphenated, so
+  // this is only a fallback when the company endpoint is unreachable.)
+  const last = parts[parts.length - 1]
+  if (last === "remote" || last === "presencial" || last === "hibrido") {
+    return parts[parts.length - 2]
+  }
+  return last
+}
+
+/** Resolve a company name from its numeric id, falling back to the slug token. */
+async function resolveCompany(attrs: any, jobId: string): Promise<string | null> {
+  const companyId = attrs?.company?.data?.id
+  if (companyId == null) return companyFromSlug(jobId)
+  const cached = companyNameCache.get(String(companyId))
+  if (cached) return cached
+  try {
+    const json = await apiFetch(`${COMPANY_URL}/${companyId}`)
+    const name = json?.data?.attributes?.name
+    if (name) {
+      companyNameCache.set(String(companyId), name)
+      return name
+    }
+  } catch {
+    // fall through to slug-derived name
+  }
+  return companyFromSlug(jobId)
+}
+
 /** Parse Get on Board JSON:API list payload. */
-export function parseJobs(json: any): JobResult[] {
+export async function parseJobs(json: any): Promise<JobResult[]> {
   if (!json || !Array.isArray(json.data)) return []
-  return json.data.map((item: any) => {
+  const items = await Promise.all(json.data.map(async (item: any) => {
     const attrs = item.attributes || {}
-    const companyData = attrs.company?.data?.attributes || {}
-    const companyName = companyData.name || null
+    const companyName = await resolveCompany(attrs, item.id)
 
     let location = "Remote"
     if (!attrs.remote) {
@@ -126,5 +163,6 @@ export function parseJobs(json: any): JobResult[] {
       portal: "getonbrd-search",
       source: "cli"
     }
-  })
+  }))
+  return items
 }

@@ -276,7 +276,7 @@ LinkedIn search links:
 After presenting, ask:
 > "Want me to evaluate any of these in detail? Just give me the number(s)."
 
-If the user picks a number, run `/cv <url>` to generate a tailored CV (tools/gen_cv.py): one LLM call, one compile, then the tracker row and posting archive.
+If the user picks a number, run `/cv <url>` to generate a tailored CV: the assistant evaluates the posting, `tools/gen_cv.py` builds and compiles, then records the tracker row and posting archive.
 
 If the run found many new jobs (roughly 8+), also suggest `/rank` - it batch-scores all new postings against the full fit framework and returns a ranked shortlist, which beats eyeballing a long table. (`/rank` sets the `ranked` and `expired` status values in `seen_jobs.json`; treat both as already-seen for dedup purposes.)
 

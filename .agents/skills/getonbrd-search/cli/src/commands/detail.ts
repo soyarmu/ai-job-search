@@ -14,25 +14,31 @@ export async function runDetail(opts: DetailOpts): Promise<number> {
       if (match) id = match[1]
     }
 
-    // Query Get on Board API using the ID as a keyword query to locate the specific job
-    const params = new URLSearchParams()
-    params.append("query", id)
-    params.append("page", "1")
-    params.append("per_page", "10")
+    // Get on Board's search index does not match on the posting slug, so query by
+    // distinctive tokens taken from the slug (company name first, then other terms)
+    // and locate the exact posting by its id locally.
+    const tokens = id.split("-").filter(t => t.length > 2)
+    // Try the segment most likely to be the company/employer first, then any others.
+    const candidateQueries = [tokens[tokens.length - 2] || tokens[tokens.length - 1], ...tokens.slice(0, -2).reverse()].filter(Boolean)
 
-    const url = `${SEARCH_URL}?${params.toString()}`
-    const json = await apiFetch(url)
+    let job: JobResult | undefined
+    for (const q of candidateQueries) {
+      const params = new URLSearchParams()
+      params.append("query", q)
+      params.append("page", "1")
+      params.append("per_page", "50")
 
-    if (!json) {
-      process.stderr.write(JSON.stringify({ error: `Job with ID '${id}' not found`, code: "NOT_FOUND" }) + "\n")
-      return 1
+      const url = `${SEARCH_URL}?${params.toString()}`
+      const json = await apiFetch(url)
+      if (!json) continue
+
+      const results = await parseJobs(json)
+      job = results.find(r => r.id === id)
+      if (job) break
     }
 
-    const results = parseJobs(json)
-    const job = results.find(r => r.id === id)
-
     if (!job) {
-      process.stderr.write(JSON.stringify({ error: `Job with ID '${id}' not found in search results`, code: "NOT_FOUND" }) + "\n")
+      process.stderr.write(JSON.stringify({ error: `Job with ID '${id}' not found`, code: "NOT_FOUND" }) + "\n")
       return 1
     }
 

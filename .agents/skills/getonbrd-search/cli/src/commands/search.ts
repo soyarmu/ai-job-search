@@ -28,7 +28,7 @@ export async function runSearch(opts: SearchOpts): Promise<number> {
       return 0
     }
 
-    let results = parseJobs(json)
+    let results = await parseJobs(json)
 
     if (opts.limit && opts.limit > 0) {
       results = results.slice(0, opts.limit)

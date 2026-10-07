@@ -24,7 +24,7 @@ Read in parallel:
 2. **`job_scraper/seen_jobs.json`** — Load if present (default to empty list if missing). Parse each entry from the `seen` dictionary:
    `title`, `company`, `url`, `first_seen`, `posted_date`, `deadline`, `fit`, `fit_score`, `status` (new/skipped/ranked/expired), `portal`, `source`, `rank_score`, `rank_verdict`, `strengths`, `gaps`.
 
-3. **`job_scraper/summaries.json`** — Load if present (default to empty dict). Maps a posting key (normalized URL, or lowercase `company|role`) to `{company, role, summary}`. Written by `tools/gen_cv.py` (`--summarize-only` and the CV path). The Summary column reads from here at generation time.
+3. **`job_scraper/summaries.json`** — Load if present (default to empty dict). Maps a posting key (normalized URL, or lowercase `company|role`) to `{company, role, summary}`. Saved by `tools/gen_cv.py` (the CV path). The Summary column reads from here at generation time.
 
 3. **`documents/applications/*/outcome.md`** — Read outcome files to extract the exact interview stages reached (checkboxes) and any notes.
 
@@ -154,10 +154,8 @@ Columns with only empty values across all rows may be omitted.
 
 ### Summary column & Generate CV
 
-- **Summary**: from `summaries.json`, embedded at generation time. When a row has no summary, render a small "Summarize" link that `POST`s to `/api/summary` and fills the cell in place.
-- **Generate CV** button per row: `POST /api/cv` with `{url}` (when the row has a source URL) or `{text, company, role}` as a paste fallback. Disable + spinner while running, then show fit / gaps / tokens and a link to `cv/main_<company>_<role>.pdf`.
-- When the page is opened as `file://` (no local server), the buttons show a hint: "Run: python3 tools/dashboard_server.py".
-- `tools/dashboard_server.py` serves the dashboard and these two endpoints on `127.0.0.1:8765`. Rendering the dashboard must never call an LLM; only the buttons (via the server) do.
+- **Summary**: from `summaries.json`, embedded at generation time. Rows without one show `—` (there is no runtime summarize endpoint).
+- **Generate CV** button per row: copies `/cv <url>` to the clipboard for the row with a source URL (a prompt fallback if the clipboard is blocked), for the user to paste into Claude Code. The dashboard never generates a CV itself — tailoring happens in Claude via `/cv`, so there is no server and no `/api/cv` endpoint. A row with no source URL shows a hint to run `/cv` with pasted posting text.
 
 ---
 

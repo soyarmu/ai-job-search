@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
-"""Lean CV generator. One LLM call picks IDs from cv/master.json, one LaTeX compile,
-then records the tracker row and archives the posting (replaces /apply Step 6b).
+"""Lean CV generator. Builds a LaTeX CV from cv/master.json, compiles it, then records
+the tracker row and archives the posting. No LLM call, no API keys, no model choice:
+content tailoring happens before this script runs.
+
+The normal flow is a pre-evaluated selection written by the assistant (see
+.claude/commands/cv.md); without --selection the script falls back to the default
+selection (every skill and every bullet up to each job's max_bullets).
 
 Usage:
-  python3 tools/gen_cv.py "https://company.com/job/123"
-  python3 tools/gen_cv.py --file job.txt [--source URL]
-  python3 tools/gen_cv.py --dry-run --company X --role Y   (no LLM call)
-Env: GEMINI_API_KEY (or GOOGLE_API_KEY); optional CV_MODEL (default gemini-2.5-flash-lite)
+  python3 tools/gen_cv.py selection.json                            (pre-evaluated selection)
+  python3 tools/gen_cv.py "https://company.com/job/123" --selection selection.json
+  python3 tools/gen_cv.py --file job.txt --source URL --selection selection.json
+  python3 tools/gen_cv.py --dry-run --company X --role Y   (build/compile only; tracker and archive untouched)
+
+Selection JSON fields: company, role, deadline, fit_rating, summary_id, summary,
+skill_names, bullet_ids, gaps.
 """
-import argparse, csv, datetime, json, os, re, shutil, subprocess, sys, time, urllib.error, urllib.request
+import argparse, csv, datetime, hashlib, json, os, re, shutil, subprocess, sys, urllib.request
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CV_DIR = os.path.join(ROOT, "cv")
@@ -18,12 +26,21 @@ HEADER = ["date", "company", "sector", "role", "role_type", "channel", "status",
           "fit_rating", "notes", "cv_file", "cover_letter_file", "source", "deadline"]
 # ASSUMPTION: align with "Tracker status vocabulary" in .claude/commands/outcome.md
 FINAL = {"hired", "rejected", "no_response", "offer_declined", "withdrawn", "no response", "offer declined"}
-MODEL = os.environ.get("CV_MODEL", "gemini-2.5-flash-lite")
-MAX_POSTING = 8000
 
 
 def die(msg):
     sys.exit("ERROR: " + msg)
+
+
+def _force_utf8_output():
+    """Write UTF-8 whatever the host's default encoding is (see the same
+    guard in tools/rank_state.py): a piped stdout on Windows defaults to the
+    ANSI code page, so a non-ASCII company, role or summary would raise
+    UnicodeEncodeError before the dashboard/CLI caller saw any output."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)  # absent on a StringIO under test
+        if reconfigure:
+            reconfigure(encoding="utf-8")
 
 
 def clean_field(s):
@@ -32,7 +49,14 @@ def clean_field(s):
 
 
 def slug(company, role):
-    return re.sub(r"[^A-Za-z0-9]+", "_", f"{company} {role}").strip("_")[:80]
+    """File/archive slug. Plain ASCII names keep the plain scheme; names that
+    are non-ASCII or would exceed 72 chars get an md5 suffix so two different
+    applications can never collide on the same filename or archive folder."""
+    src = f"{company} {role}"
+    base = re.sub(r"[^A-Za-z0-9]+", "_", src).strip("_")
+    if len(base) <= 72 and not any(ord(c) > 127 for c in src):
+        return base
+    return base[:64].strip("_") + "_" + hashlib.md5(src.encode("utf-8")).hexdigest()[:8]
 
 
 # ---------- input ----------
@@ -60,90 +84,23 @@ def get_posting(args):
     return "", ""
 
 
-# ---------- LLM ----------
-def catalog(m):
-    lines = ["SUMMARIES:"] + [f"- {s['id']}: {s['text'][:100]}" for s in m["summaries"]]
-    lines.append("SKILLS (use exact names):")
-    lines += [f"- {g}: " + "; ".join(v) for g, v in m["skills"].items()]
-    lines.append("BULLETS (id [tags] text):")
-    for j in m["jobs"]:
-        for b in j["bullets"]:
-            lines.append(f"- {b['id']} [{','.join(b['tags'])}] ({j['company']}) {b['text'][:110]}")
-    return "\n".join(lines)
-
-
-SYSTEM = ("You select content for a tailored CV. Use ONLY ids and skill names that appear in the CATALOG. "
-          "Never invent, reword or add experience. Be honest: fit_rating is a bare integer 0-100; "
-          "gaps = requirements in the posting the catalog does not support (max 5, short phrases). "
-          "deadline = YYYY-MM-DD only if the posting explicitly states one, else empty string. "
-          "company and role exactly as the posting names them. "
-          "summary is a neutral one-line description of the role (max 40 words): what it does, main stack, "
-          "seniority, location/remote. No hype.")
-
-SUMMARY_SYSTEM = ("You summarize a job posting neutrally. No hype. "
-                  "company and role exactly as the posting names them. "
-                  "summary is max 40 words: what the role does, main stack, seniority, location/remote.")
-
-SCHEMA = {"type": "OBJECT", "properties": {
-    "company": {"type": "STRING"}, "role": {"type": "STRING"}, "deadline": {"type": "STRING"},
-    "fit_rating": {"type": "INTEGER"}, "summary_id": {"type": "STRING"},
-    "summary": {"type": "STRING"},
-    "skill_names": {"type": "ARRAY", "items": {"type": "STRING"}},
-    "bullet_ids": {"type": "ARRAY", "items": {"type": "STRING"}},
-    "gaps": {"type": "ARRAY", "items": {"type": "STRING"}}},
-    "required": ["company", "role", "deadline", "fit_rating", "summary_id", "summary", "skill_names", "bullet_ids", "gaps"]}
-
-SUMMARY_SCHEMA = {"type": "OBJECT", "properties": {
-    "company": {"type": "STRING"}, "role": {"type": "STRING"}, "summary": {"type": "STRING"}},
-    "required": ["company", "role", "summary"]}
-
-
-def call_llm_raw(system, user, schema):
-    key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-    if not key:
-        die("set GEMINI_API_KEY")
-    body = {"systemInstruction": {"parts": [{"text": system}]},
-            "contents": [{"role": "user", "parts": [{"text": user}]}],
-            "generationConfig": {"responseMimeType": "application/json", "responseSchema": schema,
-                                 "temperature": 0.2}}
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
-    req = urllib.request.Request(url, data=json.dumps(body).encode(),
-                                 headers={"Content-Type": "application/json", "x-goog-api-key": key})
-    for attempt in range(3):
-        try:
-            with urllib.request.urlopen(req, timeout=90) as r:
-                resp = json.load(r)
-            break
-        except urllib.error.HTTPError as e:
-            if e.code in (429, 500, 503) and attempt < 2:
-                time.sleep(4 * (attempt + 1))
-                continue
-            die(f"LLM HTTP {e.code}: {e.read().decode()[:300]}")
-    try:
-        sel = json.loads(resp["candidates"][0]["content"]["parts"][0]["text"])
-    except Exception:
-        die("unexpected LLM response: " + json.dumps(resp)[:300])
-    sel["_tokens"] = resp.get("usageMetadata", {}).get("totalTokenCount", "?")
-    return sel
-
-
-def call_llm(posting, m):
-    user = (f"POSTING:\n{posting[:MAX_POSTING]}\n\nCATALOG:\n{catalog(m)}\n\n"
-            "Pick: summary_id (1), summary (max 40 words), skill_names (max 24, most relevant first), "
-            "bullet_ids (max 12, most relevant first).")
-    return call_llm_raw(SYSTEM, user, SCHEMA)
-
-
-def summarize_llm(posting):
-    user = f"POSTING:\n{posting[:MAX_POSTING]}\n\nGive company, role, and a neutral max-40-word summary."
-    return call_llm_raw(SUMMARY_SYSTEM, user, SUMMARY_SCHEMA)
-
-
+# ---------- selection (no LLM) ----------
 def dry_selection(m, args):
+    """Default content selection: every skill and every bullet, first summary, fit unrated.
+    Used when no --selection JSON is provided (content tailoring is done out-of-band)."""
     return {"company": args.company or "", "role": args.role or "", "deadline": "", "fit_rating": 0,
             "summary_id": m["summaries"][0]["id"],
+            "summary": "",
             "skill_names": [s for v in m["skills"].values() for s in v],
-            "bullet_ids": [b["id"] for j in m["jobs"] for b in j["bullets"]], "gaps": [], "_tokens": 0}
+            "bullet_ids": [b["id"] for j in m["jobs"] for b in j["bullets"]], "gaps": []}
+
+
+def load_selection(path):
+    """Load a pre-evaluated selection JSON: {company, role, deadline, fit_rating,
+    summary_id, summary, skill_names, bullet_ids, gaps}. Written by Claude/the user
+    after evaluating the posting - no LLM runs inside this script."""
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
 
 
 # ---------- LaTeX ----------
@@ -171,11 +128,11 @@ PREAMBLE = r"""\documentclass[11pt,a4paper,sans]{moderncv}
 
 def pick_content(m, sel):
     sums = {s["id"]: s["text"] for s in m["summaries"]}
-    summary = sums.get(sel["summary_id"]) or m["summaries"][0]["text"]
-    wanted = set(sel["skill_names"])
+    summary = sums.get(sel.get("summary_id")) or m["summaries"][0]["text"]
+    wanted = set(sel.get("skill_names") or [])
     skills = {g: [s for s in v if s in wanted] for g, v in m["skills"].items()}
     skills = {g: v for g, v in skills.items() if v}
-    order = {b: i for i, b in enumerate(sel["bullet_ids"])}
+    order = {b: i for i, b in enumerate(sel.get("bullet_ids") or [])}
     jobs = []
     for j in m["jobs"]:
         chosen = sorted([b for b in j["bullets"] if b["id"] in order], key=lambda b: order[b["id"]])
@@ -218,13 +175,17 @@ def compile_tex(base):
     pdf = os.path.join(CV_DIR, base + ".pdf")
     if os.path.exists(pdf):
         os.remove(pdf)
-    r = subprocess.run(["lualatex", "-interaction=nonstopmode", base + ".tex"], cwd=CV_DIR,
-                       capture_output=True, text=True, timeout=180)
+    try:
+        r = subprocess.run(["lualatex", "-interaction=nonstopmode", base + ".tex"], cwd=CV_DIR,
+                           capture_output=True, text=True, timeout=180)
+    except subprocess.TimeoutExpired:
+        print(f"WARN: lualatex timed out after 180s; see cv/{base}.log")
+        return None
     pages = re.search(r"\((\d+) pages?", r.stdout)
     if not os.path.exists(pdf):
         print(f"WARN: compile failed, see cv/{base}.log")
         return None
-    for ext in (".aux", ".out"):
+    for ext in (".aux", ".out", ".log"):
         try:
             os.remove(os.path.join(CV_DIR, base + ext))
         except OSError:
@@ -233,6 +194,20 @@ def compile_tex(base):
     if n != 2:
         print(f"WARN: PDF has {n} pages (target 2). Lower max_bullets in cv/master.json or trim the skill list.")
     return pdf
+
+
+def archive_pdf(base, pdf):
+    """Copy the compiled PDF into cv/generated/YYYY-MM-DD/ so generated CVs are
+    grouped by the day they were built. Returns the archived path, or None if
+    there is no PDF to copy (compile skipped or failed)."""
+    if not pdf:
+        return None
+    day = datetime.date.today().isoformat()
+    dest_dir = os.path.join(CV_DIR, "generated", day)
+    os.makedirs(dest_dir, exist_ok=True)
+    dest = os.path.join(dest_dir, os.path.basename(pdf))
+    shutil.copyfile(pdf, dest)
+    return os.path.relpath(dest, ROOT)
 
 
 # ---------- tracker + archive (replaces /apply Step 6b) ----------
@@ -246,6 +221,9 @@ def update_tracker(company, role, fit, source, deadline, cv_file):
             header, data = lines[0], lines[1:]
         if header[-1] != "deadline":
             header.append("deadline")
+    missing = [c for c in ("company", "role", "status", "cv_file", "fit_rating", "source") if c not in header]
+    if missing:
+        die(f"tracker header missing columns {missing}; fix job_search_tracker.csv first")
     ix = {h: i for i, h in enumerate(header)}
     for r in data:
         r += [""] * (len(header) - len(r))
@@ -286,41 +264,38 @@ def archive_posting(company, role, posting):
     return path
 
 
-# ---------- summaries ----------
+# ---------- summaries persistence ----------
 SUMMARIES = os.path.join(ROOT, "job_scraper", "summaries.json")
 
 
-def norm_key(url):
-    """Normalize a posting URL for the summaries key: strip query/fragment and a trailing slash."""
-    return url.split("?")[0].split("#")[0].rstrip("/")
+def norm_key(s):
+    base = re.sub(r"[^a-z0-9]+", "", str(s).lower())
+    if any(ord(c) > 127 for c in str(s)):
+        base += "_" + hashlib.md5(str(s).encode("utf-8")).hexdigest()[:8]
+    return base
 
 
-def summary_key(company, role, source):
-    if source and source.startswith("http"):
-        return norm_key(source)
-    return f"{company}|{role}".lower()
+def summary_key(company, role):
+    return norm_key(company) + "|" + norm_key(role)
 
 
 def load_summaries():
+    if not os.path.exists(SUMMARIES):
+        return {}
     try:
         with open(SUMMARIES, encoding="utf-8") as f:
             return json.load(f)
-    except (OSError, ValueError):
+    except (ValueError, OSError):
         return {}
 
 
-def save_summary(company, role, summary, source, force):
-    """Persist a summary; never overwrite an existing one unless force=True."""
+def save_summary(company, role, summary):
     data = load_summaries()
-    key = summary_key(company, role, source)
-    if key in data and not force:
-        return data[key], False
-    entry = {"company": company, "role": role, "summary": summary}
-    data[key] = entry
+    key = summary_key(company, role)
+    data[key] = {"company": company, "role": role, "summary": summary}
     os.makedirs(os.path.dirname(SUMMARIES), exist_ok=True)
     with open(SUMMARIES, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    return entry, True
 
 
 def main():
@@ -328,59 +303,58 @@ def main():
     ap.add_argument("posting", nargs="?")
     ap.add_argument("--file"); ap.add_argument("--source")
     ap.add_argument("--company"); ap.add_argument("--role")
+    ap.add_argument("--selection", help="path to a pre-evaluated selection JSON (written by Claude/the user")
     ap.add_argument("--dry-run", action="store_true"); ap.add_argument("--no-compile", action="store_true")
-    ap.add_argument("--summarize-only", action="store_true")
     ap.add_argument("--json", action="store_true")
-    ap.add_argument("--force", action="store_true")
     a = ap.parse_args()
-
-    if a.summarize_only:
-        posting, source = get_posting(a)
-        if not posting.strip():
-            die("no posting provided")
-        res = summarize_llm(posting)
-        company = (a.company or res.get("company", "")).strip()
-        role = (a.role or res.get("role", "")).strip()
-        summary = (res.get("summary") or "").strip()
-        if not company or not role:
-            die("could not determine company/role; pass --company and --role")
-        _, wrote = save_summary(company, role, summary, source, a.force)
-        if a.json:
-            print(json.dumps({"company": company, "role": role, "summary": summary,
-                              "tokens": res["_tokens"], "stored": wrote}, ensure_ascii=False))
-        else:
-            print(f"{company} | {role} | {summary}")
-        return
+    _force_utf8_output()
 
     m = json.load(open(MASTER, encoding="utf-8"))
     posting, source = ("", "") if a.dry_run else get_posting(a)
     if not a.dry_run and not posting.strip():
         die("no posting provided")
-    sel = dry_selection(m, a) if a.dry_run else call_llm(posting, m)
-    company = (a.company or sel["company"]).strip()
-    role = (a.role or sel["role"]).strip()
+    sel = load_selection(a.selection) if a.selection else dry_selection(m, a)
+    company = (a.company or sel.get("company") or "").strip()
+    role = (a.role or sel.get("role") or "").strip()
     if not company or not role:
-        die("could not determine company/role; pass --company and --role")
-    deadline = sel["deadline"] if re.fullmatch(r"\d{4}-\d{2}-\d{2}", sel.get("deadline", "")) else ""
-    fit = max(0, min(100, int(sel["fit_rating"])))
+        die("pass --company and --role")
+    deadline = sel.get("deadline") or ""
+    deadline = deadline if re.fullmatch(r"\d{4}-\d{2}-\d{2}", deadline) else ""
+    try:
+        fit = max(0, min(100, int(sel.get("fit_rating") or 0)))
+    except (TypeError, ValueError):
+        die("selection fit_rating must be an integer 0-100")
+    summary = (sel.get("summary") or "").strip()
     base = "main_" + slug(company, role)
     open(os.path.join(CV_DIR, base + ".tex"), "w", encoding="utf-8").write(build_tex(m, sel))
     pdf = None if a.no_compile else compile_tex(base)
+    gen_pdf = archive_pdf(base, pdf)
     cv_file = f"cv/{base}.tex"
+    gaps = sel.get("gaps") or []
+    files = [cv_file] + ([f"cv/{base}.pdf"] if pdf else []) + ([gen_pdf] if gen_pdf else [])
+    if a.dry_run:
+        # Build and compile only: the tracker row, posting archive and
+        # summaries.json are the persistent records and stay untouched.
+        if a.json:
+            print(json.dumps({"dry_run": True, "company": company, "role": role, "fit": fit,
+                              "gaps": gaps, "files": files},
+                             ensure_ascii=False))
+        else:
+            print(f"dry-run: {company} | {role} | fit {fit} | tracker/archive untouched")
+            print(f"files: " + ", ".join(files))
+        return
     action = update_tracker(company, role, fit, clean_field(source), deadline, cv_file)
     arch = archive_posting(company, role, posting)
-    summary = (sel.get("summary") or "").strip()
     if summary:
-        save_summary(company, role, summary, source, a.force)
+        save_summary(company, role, summary)
     if a.json:
-        out = {"company": company, "role": role, "fit": fit, "gaps": sel["gaps"],
-               "deadline": deadline, "files": [cv_file] + ([f"cv/{base}.pdf"] if pdf else []),
-               "tracker": action, "summary": summary, "tokens": sel["_tokens"]}
+        out = {"company": company, "role": role, "fit": fit, "gaps": gaps,
+               "deadline": deadline, "files": files,
+               "tracker": action, "summary": summary}
         print(json.dumps(out, ensure_ascii=False))
         return
-    print(f"{company} | {role} | fit {fit} | deadline {deadline or '-'} | tokens {sel['_tokens']}")
-    print("gaps: " + ("; ".join(sel["gaps"]) or "none"))
-    print(f"files: {cv_file}" + (f", cv/{base}.pdf" if pdf else ""))
+    print(f"{company} | {role} | fit {fit} | deadline {deadline or '-'}")
+    print(f"files: " + ", ".join(files))
     print(f"tracker: {action}\nposting: {arch}")
 
 
